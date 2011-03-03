@@ -1,0 +1,160 @@
+= OptSimple provides a very simple interface to command line parsing. 
+
+== Description
+Parameter specification, validity checking and argument transformations
+can be put in one place, default parameters are easily set, and an automatic
+usage statement is constructed.
+
+There are three methods to define command line parameters:
+
+ flag - a command line switch with no arguments following (although you can still use flag
+ as a synonym for option. But default behavior is to expect no args.)
+ 
+ option - an optional command line parameter with one or more arguments
+ 
+ argument - a mandatory command line parameter with one or more arguments
+
+Inside the blocks in flag, option, and argument a shortcut function called 'set_opt'
+can be used to set an option that will be returned in the options hash.
+
+The number of arguments are determined by the 'arity' of the block. 
+
+The order in which the parameters are defined dictate their order on the command line.
+
+User defined help banners, summaries or the whole usage statement can be defined. 
+
+== Documentation
+
+See OptSimple for the API specification
+
+== Installation
+
+It is recommended to install OptSimple using RubyGems:
+
+ $ sudo gem install opt-simple
+
+== Examples
+
+=== A very simple example with no error checking. Use at your own risk!
+
+ require 'opt_simple'
+ 
+ defaults = {
+ 'max' => 40
+ } 
+ 
+ options,arguments = OptSimple.new(defaults).parse_opts! 
+
+ puts "Options"
+ puts options.inspect
+ 
+ puts "Arguments"
+ puts arguments.inspect
+ 
+ puts "ARGV"
+ puts ARGV
+ 
+ 
+=== An example that provides error checking on ARGV, using all default behavior
+ 
+ require 'opt_simple'
+ 
+ options,arguments = OptSimple.new.parse_opts! do 
+   argument "-i","inFile" 
+   option %w[-p --pattern --glob-pattern], "glob pattern"
+   flag "-v","Verbose"
+   flag "-whatever"
+ end
+ 
+ puts "Options"
+ puts options.inspect
+ 
+ puts "Arguments"
+ puts arguments.inspect
+ 
+ puts "ARGV"
+ puts ARGV
+
+
+=== An example that shows how to use 'set_opt', set the banner string, and add a summary.
+
+ require 'opt_simple'
+ 
+ defaults = {
+   "max" => 10
+ }
+ 
+ options,arguments = OptSimple.new(defaults).parse_opts! do 
+   banner "USAGE: #{$0}"
+   summary "Show how to set a banner and summary."
+ 
+   argument "-i","inFile" 
+   option %w[-m -max --maximum-value],"Maximum val" do |arg|
+     set_opt arg.to_i
+   end
+ end
+ 
+ puts "Options"
+ puts options.inspect
+ 
+ puts "Arguments"
+ puts arguments.inspect
+ 
+ puts "ARGV"
+ puts ARGV
+
+=== An example that shows that you can easily set your defaults in normal Ruby variables and provide your own help.
+
+ require 'opt_simple'
+ 
+ in_file = nil
+ min = 0
+ max = 10
+ pattern = "*"
+
+ usage_string = <<-UL
+ Usage: $0 [options]
+ 
+   -i, --infile FILE
+  [--range (min - default #{min}, max - default #{max})]
+  [-p, --pattern, --glob-pattern (default #{pattern})]
+  [-v (verbose)]
+  [-h, --help (help)]
+
+ UL
+
+ OptSimple.new.parse_opts! do 
+   help usage_string
+
+   argument %w[-i --infile],"inFile" do |arg|
+     in_file = arg
+     error "inFile must exist and be readable" unless(File.readable?(in_file))
+   end
+   
+   option ["--range"], "range: min,max (both >0) default is #{min},#{max}" do | arg1,arg2 |
+     min = arg1.to_i
+     max = arg2.to_i    
+     
+     error "max must be greater than min" unless max > min
+     error "both must be >=0" if min < 0
+   end  
+ 
+   option %w[-p --pattern --glob-pattern], "glob pattern, default is #{pattern}" do |arg|
+     pattern = arg
+   end
+ 
+   flag "-v","Verbose"
+ end
+ 
+ puts "in_file #{in_file}"
+ puts "min #{min}"
+ puts "max #{max}"
+ puts "pattern #{pattern}"
+ 
+ puts "ARGV"
+ puts ARGV
+ 
+== Questions and/or Comments
+
+email {Ethan Stryker}[mailto:e.stryker@gmail.com]
+
