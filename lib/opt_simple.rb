@@ -169,7 +169,7 @@ class OptSimple
   # leading '-'s removed) will be used as keys in the options hash 
   # and the values set to true when  seen in the args array
   def flag(switches,help="",&block)
-    add_parameter(Flag.new(switches,help,&block))
+    add_parameter(Flag.new(switches,help,'',&block))
   end
 
   # Registers an optional parameter, with one or more argument following it.
@@ -179,8 +179,8 @@ class OptSimple
   # If no block is given, then the strings specified (after the 
   # leading '-'s removed) will be used as keys in the options hash 
   # and the values set to the arg following the switch in the args array.
-  def option(switches,help="",&block)
-    add_parameter(Option.new(switches,help,&block))
+  def option(switches,help="",metavar="ARG",&block)
+    add_parameter(Option.new(switches,help,metavar,&block))
   end
 
   # Registers a mandatory parameter, with one or more argument following it.
@@ -190,8 +190,8 @@ class OptSimple
   # If no block is given, then the strings specified (after the 
   # leading '-'s removed) will be used as keys in the options hash 
   # and the values set to the arg following the switch the args array.
-  def argument(switches,help="",&block)
-    add_parameter(Argument.new(switches,help,&block))
+  def argument(switches,help="",metavar="ARG",&block)
+    add_parameter(Argument.new(switches,help,metavar,&block))
   end
 
   # A shortcut for raising an OptSimple::Error exception
@@ -232,7 +232,8 @@ class OptSimple
   # You probably don't want to call this method. 
   # A lower level function that adds a Flag, Option, or Argument,
   def add_parameter(parm)
-    total_switch_len = parm.switches.join(', ').length
+    metavar_space = parm.metavar.empty? ? 0 : parm.metavar.length + 1 
+    total_switch_len = parm.switches.join(', ').length + metavar_space
     @longest_switch_len = total_switch_len if total_switch_len > @longest_switch_len
 
     parm.names.each do | n |
@@ -252,14 +253,15 @@ class OptSimple
   # Option and Argument are derived. Provides documentation methods, 
   # an 'error method', and the 'set_opt' utility funciton. 
   class Parameter
-    attr_reader :switches,:param_options,:block
+    attr_reader :switches,:param_options,:metavar,:block
 
     # 'switches' can be a String or an Array of Strings, and specifies the switches expected on the CL.
     # 'help' provides a description of the parameter
     # and an optional block can do parameter validation/transformation.
-    def initialize(switches,help="",&block)
+    def initialize(switches,help="",metavar='',&block)
       self.switches = switches
       @help = help
+      @metavar = metavar
       @block = block
       @param_options = {}
       @names = nil
@@ -285,7 +287,7 @@ class OptSimple
       long_str = long_parms.join(', ') + other_parms.join(', ')
       sh_str << ', ' unless sh_str =~/^\s+$/ or long_str.empty?
       
-      "    %-#{switch_len}s" % (sh_str + long_str) + " \t#{@help}"
+      "    %-#{switch_len}s" % (sh_str + long_str + ' ' + @metavar) + " \t#{@help}"
     end
 
     # A shortcut for raising an OptSimple::Error exception
@@ -314,8 +316,8 @@ class OptSimple
   # leading '-'s removed) will be used as keys in the options hash 
   # and the values set to true when  seen in the args array  
   class Flag < Parameter
-    def initialize(switches,help="",&block)
-      super(switches,help,&block)
+    def initialize(switches,help="",metavar='',&block)
+      super(switches,help,metavar,&block)
       unless block_given?
 	@block = Proc.new { names.each {|n| @param_options[n] = true}}
       end
@@ -330,8 +332,8 @@ class OptSimple
   # leading '-'s removed) will be used as keys in the options hash 
   # and the values set to the arg following the switch in the args array.
   class Option < Parameter
-    def initialize(switches,help="",&block)
-      super(switches,help,&block)
+    def initialize(switches,help="",metavar="ARG",&block)
+      super(switches,help,metavar,&block)
       unless block_given?
 	@block = Proc.new {|arg| names.each {|n| @param_options[n] = arg}}
       end
