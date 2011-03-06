@@ -24,5 +24,23 @@ class TestHelpStatement < Test::Unit::TestCase
     end
   end
 
+  must "handle arguments with equals and commas" do
+    os = OptSimple.new({},['-a=2','--foo=4,5'])
+    x = nil
+    y = nil
+    opts, args = os.parse_opts! do
+      option '-a' do |arg| 
+	set_opt arg.to_i
+      end
+      option "--foo" do |a,b|
+	x = a.to_i
+	y = b.to_i
+      end
+    end
+
+    assert_equal opts['a'],2
+    assert_equal x,4
+    assert_equal y,5
+  end
 end
 

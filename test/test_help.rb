@@ -42,4 +42,10 @@ class TestHelpStatement < Test::Unit::TestCase
     os.summary "My summary"
     assert os.to_s.match(Regexp.new("My summary",Regexp::MULTILINE))
   end
+
+  must "add metavars to help statement" do 
+    os = OptSimple.new({},['-h'])
+    os.add_parameter(OptSimple::Option.new '-a',"some help","THING")
+    assert os.to_s.match(Regexp.new("\-a.*THING.*some help",Regexp::MULTILINE))
+  end
 end
