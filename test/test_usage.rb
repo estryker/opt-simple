@@ -42,5 +42,40 @@ class TestHelpStatement < Test::Unit::TestCase
     assert_equal x,4
     assert_equal y,5
   end
+
+  must "accumulate lists of args when asked" do 
+    os = OptSimple.new({},%w[-i foo.bar --infile bar.in])
+    o,a = os.parse_opts! do 
+      option %w[-i --infile], "Infile, multiple allowed", "INFILE" do | arg |
+	accumulate_opt arg
+      end
+    end
+
+    assert_equal o['i'],%w[foo.bar bar.in]
+    assert_equal o['infile'],%w[foo.bar bar.in]
+  end
+
+  must "accumulate numbers of flags set when asked" do 
+    os = OptSimple.new({},%w[-v -v --verbose -v])
+    o,a = os.parse_opts! do 
+      flag %w[-v  --verbose],"Verbosity. the more you set, the more we give" do 
+	accumulate_opt
+      end
+    end
+    assert_equal o['v'],4
+    assert_equal o['verbose'],4
+  end
+
+  must "set last arg when duplicated by default or when set_opt is used" do 
+    os = OptSimple.new({},%w[-i foo.bar --infile bar.in -i baz])
+    o,a = os.parse_opts! do 
+      option %w[-i --infile], "Infile, multiple allowed", "INFILE" do | arg |
+	set_opt arg
+      end
+    end
+
+    assert_equal o['i'],'baz'
+    assert_equal o['infile'],'baz'
+  end
 end
 

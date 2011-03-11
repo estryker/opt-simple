@@ -109,8 +109,9 @@ class OptSimple
 	    # don't disrupt the other locations. 
 	    chunks = []
 	    arg_locations.sort.reverse.each do |loc|  
-	      # if we want the first one to win:
-	      # chunks.push @args.slice!(loc .. loc + parm.block.arity)[1..-1]
+	      # if we want the first one to win
+	      #chunks.push @args.slice!(loc .. loc + parm.block.arity)[1..-1]
+	      # if we want the last one to win:
 	      chunks.unshift @args.slice!(loc .. loc + parm.block.arity)[1..-1]
 	    end
 
