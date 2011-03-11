@@ -70,7 +70,7 @@ class OptSimple
 	# actually get parsed. 
 	
 	# add the help option at the end
-	option %w[-h --help] ,"(for this help message)"
+	flag %w[-h --help] ,"(for this help message)"
 	
 	# first look for a call for help
 	unless (%w[-h --help] & @args).empty?
@@ -85,27 +85,48 @@ class OptSimple
 	  @positional_arguments += @args.slice!(loc..-1)[1..-1] 
 	end
 	
+	# Handle the case where a user specifies --foo=bar, or --foo=bar,baz
+	equal_args = @args.find_all {|arg| arg.include?('=') }
+	@args.delete_if {|arg| arg.include?('=') }
+	equal_args.each do | e |
+	  switch,list = e.split('=')
+	  @args << switch
+	  list.split(',').each {|val| @args << val }
+	end
+
 	# now actually parse the args, and call all the stored up blocks from the options
 	@parameters.each do | parm |
-	  intersection =  @args & parm.switches
+	  mandatory_check.delete(parm.switches)
+	  intersection = @args & parm.switches
 	  unless intersection.empty?
-	    loc = @args.index(intersection.first)
-	    
-	    # remove the flag, but skip it to put it into pieces
-	    pieces = @args.slice!(loc .. loc + parm.block.arity)[1..-1]
-	    if pieces.length < parm.block.arity or
-		pieces.any? {|p| p.start_with?('-')}
-	      raise OptSimple::MissingArgument.new "Not enough args following #{intersection.first}",self 
-	    end
-	    
-	    mandatory_check.delete(parm.switches)
+	 
+	    arg_locations =  []
+	    @args.each_with_index {|arg,i| arg_locations << i if intersection.include?(arg) }
 
-	    begin
-	      parm.instance_exec(*pieces,&parm.block)
-	    rescue OptSimple::Error => e
-	      raise OptSimple::Error.new e.message,self
+	    # we want to process the args in order to provide predictable behavior
+	    # in the case of switch duplication. 
+	    # We do it in reverse so that the slicing removes pieces from the end so we
+	    # don't disrupt the other locations. 
+	    chunks = []
+	    arg_locations.sort.reverse.each do |loc|  
+	      # if we want the first one to win:
+	      # chunks.push @args.slice!(loc .. loc + parm.block.arity)[1..-1]
+	      chunks.unshift @args.slice!(loc .. loc + parm.block.arity)[1..-1]
 	    end
 
+	    chunks.each do | pieces |
+	      if pieces.length < parm.block.arity or
+		  pieces.any? {|p| p.start_with?('-')}
+		raise OptSimple::MissingArgument.new "Not enough args following #{@args[loc]}",self 
+	      end
+	      
+	      begin
+		parm.instance_exec(*pieces,&parm.block)
+	      rescue OptSimple::Error => e
+		raise OptSimple::Error.new e.message,self
+	      end
+	    end
+	    
 	    @options.merge!(parm.param_options)
 	  end
 	end
@@ -169,12 +190,13 @@ class OptSimple
   # leading '-'s removed) will be used as keys in the options hash 
   # and the values set to true when  seen in the args array
   def flag(switches,help="",&block)
-    add_parameter(Flag.new(switches,help,'',&block))
+    add_parameter(Flag.new(switches,help,&block))
   end
 
   # Registers an optional parameter, with one or more argument following it.
   # 'switches' can be a String or an Array of Strings, and specifies the switches expected on the CL.
-  # 'help' provides a description of the parameter
+  # 'help' provides a description of the parameter, and 'metavar' will be used in the
+  # usage statement.
   # and an optional block can do parameter validation/transformation.
   # If no block is given, then the strings specified (after the 
   # leading '-'s removed) will be used as keys in the options hash 
@@ -185,7 +207,8 @@ class OptSimple
 
   # Registers a mandatory parameter, with one or more argument following it.
   # 'switches' can be a String or an Array of Strings, and specifies the switches expected on the CL.
-  # 'help' provides a description of the parameter
+  # 'help' provides a description of the parameter, and 'metavar' will be used in the
+  # usage statement.
   # and an optional block can do parameter validation/transformation.
   # If no block is given, then the strings specified (after the 
   # leading '-'s removed) will be used as keys in the options hash 
@@ -232,9 +255,8 @@ class OptSimple
   # You probably don't want to call this method. 
   # A lower level function that adds a Flag, Option, or Argument,
   def add_parameter(parm)
-    metavar_space = parm.metavar.empty? ? 0 : parm.metavar.length + 1 
-    total_switch_len = parm.switches.join(', ').length + metavar_space
-    @longest_switch_len = total_switch_len if total_switch_len > @longest_switch_len
+    
+    @longest_switch_len = parm.switch_len if parm.switch_len > @longest_switch_len
 
     parm.names.each do | n |
       if @param_names.has_key?(n)
@@ -258,10 +280,9 @@ class OptSimple
     # 'switches' can be a String or an Array of Strings, and specifies the switches expected on the CL.
     # 'help' provides a description of the parameter
     # and an optional block can do parameter validation/transformation.
-    def initialize(switches,help="",metavar='',&block)
+    def initialize(switches,help="",&block)
       self.switches = switches
       @help = help
-      @metavar = metavar
       @block = block
       @param_options = {}
       @names = nil
@@ -277,8 +298,11 @@ class OptSimple
       @names ||= switches.map {|s| s.sub(/^-+/,'')}
     end
 
-    # a single line that will be put in the overall usage string
-    def help_str(switch_len)
+    def switch_len
+      @switches.join(', ').length 
+    end
+
+    def switch_str
       short_parms = @switches.find_all {|st| st.start_with?('-') and st.length == 2 and st[1] != '-'} 
       long_parms = @switches.find_all {|st| st.start_with?('--') or (st.start_with?('-') and st.length > 2)} 
       other_parms = @switches.find_all {|st| not st.start_with?('-')}
@@ -286,8 +310,13 @@ class OptSimple
       sh_str = short_parms.empty? ?  " " * 4 : short_parms.first
       long_str = long_parms.join(', ') + other_parms.join(', ')
       sh_str << ', ' unless sh_str =~/^\s+$/ or long_str.empty?
-      
-      "    %-#{switch_len}s" % (sh_str + long_str + ' ' + @metavar) + " \t#{@help}"
+
+      sh_str + long_str
+    end
+
+    # a single line that will be put in the overall usage string
+    def help_str(switch_len)
+      "    %-#{switch_len}s"  % self.switch_str + " \t#{@help}"
     end
 
     # A shortcut for raising an OptSimple::Error exception
@@ -316,8 +345,8 @@ class OptSimple
   # leading '-'s removed) will be used as keys in the options hash 
   # and the values set to true when  seen in the args array  
   class Flag < Parameter
-    def initialize(switches,help="",metavar='',&block)
-      super(switches,help,metavar,&block)
+    def initialize(switches,help="",&block)
+      super(switches,help,&block)
       unless block_given?
 	@block = Proc.new { names.each {|n| @param_options[n] = true}}
       end
@@ -326,23 +355,36 @@ class OptSimple
 
   # An optional parameter, with one or more argument following it.
   # 'switches' can be a String or an Array of Strings, and specifies the switches expected on the CL.
-  # 'help' provides a description of the parameter
+  # 'help' provides a description of the parameter, and 'metavar' will be used in the
+  # usage statement.
   # and an optional block can do parameter validation/transformation.
   # If no block is given, then the strings specified (after the 
   # leading '-'s removed) will be used as keys in the options hash 
   # and the values set to the arg following the switch in the args array.
   class Option < Parameter
+    attr_reader = :metavar
     def initialize(switches,help="",metavar="ARG",&block)
-      super(switches,help,metavar,&block)
+      super(switches,help,&block)
+      @metavar = metavar
       unless block_given?
 	@block = Proc.new {|arg| names.each {|n| @param_options[n] = arg}}
       end
+    end
+
+    def switch_len
+      metavar_space = @metavar.empty? ? 0 : @metavar.length + 1 
+      super + metavar_space
+    end
+
+    def switch_str
+      super + " #{@metavar}"
     end
   end
   
   # A mandatory parameter, with one or more argument following it.
   # 'switches' can be a String or an Array of Strings, and specifies the switches expected on the CL.
-  # 'help' provides a description of the parameter
+  # 'help' provides a description of the parameter, and 'metavar' will be used in the
+  # usage statement.
   # and an optional block can do parameter validation/transformation.
   # If no block is given, then the strings specified (after the 
   # leading '-'s removed) will be used as keys in the options hash 

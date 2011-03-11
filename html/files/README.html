@@ -53,7 +53,7 @@
     </tr>
     <tr class="top-aligned-row">
       <td><strong>Last Update:</strong></td>
-      <td>2011-03-02 21:46:38 +0000</td>
+      <td>2011-03-06 21:22:53 +0000</td>
     </tr>
     </table>
   </div>
@@ -132,13 +132,13 @@ href="../classes/OptSimple.html">OptSimple</a> using RubyGems:
  puts &quot;ARGV&quot;
  puts ARGV
 </pre>
-<h3>An example that provides error checking on ARGV, using all default behavior</h3>
+<h3>An example that provides error checking on ARGV, using all default behavior and how to specify a &#8216;metavar&#8217;</h3>
 <pre>
  require 'opt_simple'
 
  options,arguments = OptSimple.new.parse_opts! do
-   argument &quot;-i&quot;,&quot;inFile&quot;
-   option %w[-p --pattern --glob-pattern], &quot;glob pattern&quot;
+   argument &quot;-i&quot;,&quot;inFile&quot;,&quot;FILE&quot;
+   option %w[-p --pattern --glob-pattern], &quot;glob pattern&quot;,&quot;PATTERN&quot;
    flag &quot;-v&quot;,&quot;Verbose&quot;
    flag &quot;-whatever&quot;
  end

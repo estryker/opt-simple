@@ -8,8 +8,8 @@ $LOAD_PATH.unshift File.dirname($PROGRAM_NAME) + '/../lib/'
 require 'opt_simple'
 
 options,arguments = OptSimple.new.parse_opts! do 
-  argument "-i","inFile" 
-  option %w[-p --pattern --glob-pattern], "glob pattern"
+  argument "-i","inFile","FILE"
+  option %w[-p --pattern --glob-pattern], "glob pattern","PATTERN"
   flag "-v","Verbose"
   flag "-whatever"
 end

@@ -12,8 +12,8 @@ defaults = {
 }
 
 options,arguments = OptSimple.new(defaults).parse_opts! do 
-  argument "-i","inFile" 
-  option %w[-m -max --maximum-value],"Maximum val" do |arg|
+  argument "-i","inFile","FILE"
+  option %w[-m -max --maximum-value],"Maximum val","MAXVAL" do |arg|
     set_opt arg.to_i
   end
 end

@@ -55,13 +55,13 @@ It is recommended to install OptSimple using RubyGems:
  puts ARGV
  
  
-=== An example that provides error checking on ARGV, using all default behavior
+=== An example that provides error checking on ARGV, using all default behavior and how to specify a 'metavar'
  
  require 'opt_simple'
  
  options,arguments = OptSimple.new.parse_opts! do 
-   argument "-i","inFile" 
-   option %w[-p --pattern --glob-pattern], "glob pattern"
+   argument "-i","inFile","FILE"
+   option %w[-p --pattern --glob-pattern], "glob pattern","PATTERN"
    flag "-v","Verbose"
    flag "-whatever"
  end
