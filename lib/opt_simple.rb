@@ -117,7 +117,7 @@ class OptSimple
 	    chunks.each do | pieces |
 	      if pieces.length < parm.block.arity or
 		  pieces.any? {|p| p.start_with?('-')}
-		raise OptSimple::MissingArgument.new "Not enough args following #{@args[loc]}",self 
+		raise OptSimple::MissingArgument.new "Not enough args following #{intersection}",self 
 	      end
 	      
 	      begin
@@ -347,10 +347,17 @@ class OptSimple
   class Flag < Parameter
     def initialize(switches,help="",&block)
       super(switches,help,&block)
-      unless block_given?
+      if block_given?
+	names.each {|n| @param_options[n] = 0 }
+      else
 	@block = Proc.new { names.each {|n| @param_options[n] = true}}
       end
     end
+
+    def accumulate_opt
+      names.each {|n| @param_options[n] += 1}
+    end
+
   end
 
   # An optional parameter, with one or more argument following it.
@@ -366,7 +373,9 @@ class OptSimple
     def initialize(switches,help="",metavar="ARG",&block)
       super(switches,help,&block)
       @metavar = metavar
-      unless block_given?
+      if block_given?
+	names.each {|n| @param_options[n] = []}
+      else
 	@block = Proc.new {|arg| names.each {|n| @param_options[n] = arg}}
       end
     end
@@ -379,6 +388,11 @@ class OptSimple
     def switch_str
       super + " #{@metavar}"
     end
+
+    def accumulate_opt(val)
+      names.each {|n| @param_options[n] << val}
+    end
+
   end
   
   # A mandatory parameter, with one or more argument following it.
