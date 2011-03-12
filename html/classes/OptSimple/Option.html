@@ -110,11 +110,9 @@ array.
 
       <div class="name-list">
 
-        <a href="#M000024">new</a>&nbsp;&nbsp;
+        <a href="#M000024">accumulate_opt</a>&nbsp;&nbsp;
 
-        <a href="#M000025">switch_len</a>&nbsp;&nbsp;
-
-        <a href="#M000026">switch_str</a>&nbsp;&nbsp;
+        <a href="#M000023">new</a>&nbsp;&nbsp;
 
       </div>
     </div>
@@ -135,12 +133,12 @@ array.
       <h3 class="section-bar">Public Class methods</h3>
 
 
-      <div id="method-M000024" class="method-detail">
-        <a name="M000024"></a>
+      <div id="method-M000023" class="method-detail">
+        <a name="M000023"></a>
 
         <div class="method-heading">
 
-          <a href="#M000024" class="method-signature">
+          <a href="#M000023" class="method-signature">
 
           <span class="method-name">new</span><span class="method-args">(switches,help=&quot;&quot;,metavar=&quot;ARG&quot;,&amp;block)</span>
 
@@ -151,14 +149,16 @@ array.
         <div class="method-description">
 
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000024-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000024-source">
+            onclick="toggleCode('M000023-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000023-source">
 <pre>
-<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 354</span>
+<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 373</span>
     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">switches</span>,<span class="ruby-identifier">help</span>=<span class="ruby-value str">&quot;&quot;</span>,<span class="ruby-identifier">metavar</span>=<span class="ruby-value str">&quot;ARG&quot;</span>,<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
       <span class="ruby-keyword kw">super</span>(<span class="ruby-identifier">switches</span>,<span class="ruby-identifier">help</span>,<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
       <span class="ruby-ivar">@metavar</span> = <span class="ruby-identifier">metavar</span>
-      <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">block_given?</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_given?</span>
+        <span class="ruby-identifier">names</span>.<span class="ruby-identifier">each</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">n</span><span class="ruby-operator">|</span> <span class="ruby-ivar">@param_options</span>[<span class="ruby-identifier">n</span>] = []}
+      <span class="ruby-keyword kw">else</span>
         <span class="ruby-ivar">@block</span> = <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">arg</span><span class="ruby-operator">|</span> <span class="ruby-identifier">names</span>.<span class="ruby-identifier">each</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">n</span><span class="ruby-operator">|</span> <span class="ruby-ivar">@param_options</span>[<span class="ruby-identifier">n</span>] = <span class="ruby-identifier">arg</span>}}
       <span class="ruby-keyword kw">end</span>
     <span class="ruby-keyword kw">end</span>
@@ -172,14 +172,14 @@ array.
       <h3 class="section-bar">Public Instance methods</h3>
 
 
-      <div id="method-M000025" class="method-detail">
-        <a name="M000025"></a>
+      <div id="method-M000024" class="method-detail">
+        <a name="M000024"></a>
 
         <div class="method-heading">
 
-          <a href="#M000025" class="method-signature">
+          <a href="#M000024" class="method-signature">
 
-          <span class="method-name">switch_len</span><span class="method-args">()</span>
+          <span class="method-name">accumulate_opt</span><span class="method-args">(val)</span>
 
           </a>
 
@@ -187,44 +187,17 @@ array.
 
         <div class="method-description">
 
-          <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000025-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000025-source">
-<pre>
-<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 362</span>
-    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">switch_len</span>
-      <span class="ruby-identifier">metavar_space</span> = <span class="ruby-ivar">@metavar</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-value">? </span><span class="ruby-value">0</span> <span class="ruby-operator">:</span> <span class="ruby-ivar">@metavar</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span> 
-      <span class="ruby-keyword kw">super</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">metavar_space</span>
-    <span class="ruby-keyword kw">end</span>
-</pre>
-          </div>
-
-        </div>
-      </div>
-
-
-      <div id="method-M000026" class="method-detail">
-        <a name="M000026"></a>
-
-        <div class="method-heading">
-
-          <a href="#M000026" class="method-signature">
-
-          <span class="method-name">switch_str</span><span class="method-args">()</span>
-
-          </a>
-
-        </div>
-
-        <div class="method-description">
+          <p>
+append val to the parameter list
+</p>
 
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000026-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000026-source">
+            onclick="toggleCode('M000024-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000024-source">
 <pre>
-<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 367</span>
-    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">switch_str</span>
-      <span class="ruby-keyword kw">super</span> <span class="ruby-operator">+</span> <span class="ruby-node">&quot; #{@metavar}&quot;</span>
+<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 393</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">accumulate_opt</span>(<span class="ruby-identifier">val</span>)
+      <span class="ruby-identifier">names</span>.<span class="ruby-identifier">each</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">n</span><span class="ruby-operator">|</span> <span class="ruby-ivar">@param_options</span>[<span class="ruby-identifier">n</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">val</span>}
     <span class="ruby-keyword kw">end</span>
 </pre>
           </div>

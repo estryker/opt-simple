@@ -53,7 +53,7 @@
     </tr>
     <tr class="top-aligned-row">
       <td><strong>Last Update:</strong></td>
-      <td>2011-03-06 21:22:53 +0000</td>
+      <td>2011-03-12 09:37:22 +0000</td>
     </tr>
     </table>
   </div>
@@ -85,7 +85,9 @@ There are three methods to define command line parameters:
 <p>
 Inside the blocks in flag, option, and argument a shortcut function called
 &#8216;set_opt&#8217; can be used to set an option that will be returned in
-the options hash.
+the options hash. The &#8216;accumulate_opt&#8217; method can be used in
+the option and argument blocks to create a list of values, and in the flag
+block to increment a counter (with verbosity being the classic example).
 </p>
 <p>
 The number of arguments are determined by the &#8216;arity&#8217; of the
@@ -179,6 +181,45 @@ href="../classes/OptSimple.html">OptSimple</a> using RubyGems:
  puts &quot;ARGV&quot;
  puts ARGV
 </pre>
+<h3>An example that shows how to use &#8216;accumulate_opt&#8217; on an option to create a list, and on a flag to increment a counter</h3>
+<p>
+require &#8216;opt_simple&#8216;
+</p>
+<p>
+verbosity = 0
+</p>
+<p>
+options,arguments = <a
+href="../classes/OptSimple.html#M000001">OptSimple.new</a>.parse_opts! do
+</p>
+<pre>
+  option %w[-i --infile], &quot;Infile, multiple allowed&quot;, &quot;INFILE&quot; do | arg |
+    accumulate_opt arg
+  end
+
+  flag %w[-v  --verbose],&quot;Verbosity. the more you set, the more we give&quot; do
+    verbosity += 1
+  end
+
+  flag %w[-m --more-cow-bell], &quot;I've got a fever&quot; do
+    accumulate_opt
+  end
+</pre>
+<p>
+end
+</p>
+<p>
+puts &#8220;Options&#8221; puts options.inspect
+</p>
+<p>
+puts &#8220;Arguments&#8221; puts arguments.inspect
+</p>
+<p>
+puts &#8220;Verbosity&#8221; puts verbosity
+</p>
+<p>
+puts &#8220;ARGV&#8221; puts ARGV
+</p>
 <h3>An example that shows that you can easily set your defaults in normal Ruby variables and provide your own help.</h3>
 <pre>
  require 'opt_simple'

@@ -89,7 +89,7 @@ The base class for command line parameter objects from which <a
 href="Flag.html">Flag</a>, <a href="Option.html">Option</a> and <a
 href="Argument.html">Argument</a> are derived. Provides documentation
 methods, an &#8216;error method&#8217;, and the &#8216;<a
-href="Parameter.html#M000021">set_opt</a>&#8217; utility funciton.
+href="Parameter.html#M000019">set_opt</a>&#8217; utility funciton.
 </p>
 
     </div>
@@ -102,21 +102,17 @@ href="Parameter.html#M000021">set_opt</a>&#8217; utility funciton.
 
       <div class="name-list">
 
-        <a href="#M000020">error</a>&nbsp;&nbsp;
+        <a href="#M000018">error</a>&nbsp;&nbsp;
 
-        <a href="#M000019">help_str</a>&nbsp;&nbsp;
+        <a href="#M000017">help_str</a>&nbsp;&nbsp;
 
-        <a href="#M000022">mandatory?</a>&nbsp;&nbsp;
+        <a href="#M000020">mandatory?</a>&nbsp;&nbsp;
 
         <a href="#M000016">names</a>&nbsp;&nbsp;
 
         <a href="#M000014">new</a>&nbsp;&nbsp;
 
-        <a href="#M000021">set_opt</a>&nbsp;&nbsp;
-
-        <a href="#M000017">switch_len</a>&nbsp;&nbsp;
-
-        <a href="#M000018">switch_str</a>&nbsp;&nbsp;
+        <a href="#M000019">set_opt</a>&nbsp;&nbsp;
 
         <a href="#M000015">switches=</a>&nbsp;&nbsp;
 
@@ -207,7 +203,7 @@ validation/transformation.
             onclick="toggleCode('M000014-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000014-source">
 <pre>
-<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 271</span>
+<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 282</span>
     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">switches</span>,<span class="ruby-identifier">help</span>=<span class="ruby-value str">&quot;&quot;</span>,<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
       <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">switches</span> = <span class="ruby-identifier">switches</span>
       <span class="ruby-ivar">@help</span> = <span class="ruby-identifier">help</span>
@@ -225,12 +221,12 @@ validation/transformation.
       <h3 class="section-bar">Public Instance methods</h3>
 
 
-      <div id="method-M000020" class="method-detail">
-        <a name="M000020"></a>
+      <div id="method-M000018" class="method-detail">
+        <a name="M000018"></a>
 
         <div class="method-heading">
 
-          <a href="#M000020" class="method-signature">
+          <a href="#M000018" class="method-signature">
 
           <span class="method-name">error</span><span class="method-args">(string)</span>
 
@@ -246,10 +242,10 @@ exception
 </p>
 
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000020-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000020-source">
+            onclick="toggleCode('M000018-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000018-source">
 <pre>
-<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 311</span>
+<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 322</span>
     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">error</span>(<span class="ruby-identifier">string</span>)
       <span class="ruby-identifier">raise</span> <span class="ruby-constant">OptSimple</span><span class="ruby-operator">::</span><span class="ruby-constant">Error</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">string</span>
     <span class="ruby-keyword kw">end</span>
@@ -260,12 +256,12 @@ exception
       </div>
 
 
-      <div id="method-M000019" class="method-detail">
-        <a name="M000019"></a>
+      <div id="method-M000017" class="method-detail">
+        <a name="M000017"></a>
 
         <div class="method-heading">
 
-          <a href="#M000019" class="method-signature">
+          <a href="#M000017" class="method-signature">
 
           <span class="method-name">help_str</span><span class="method-args">(switch_len)</span>
 
@@ -280,10 +276,10 @@ a single line that will be put in the overall usage string
 </p>
 
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000019-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000019-source">
+            onclick="toggleCode('M000017-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000017-source">
 <pre>
-<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 306</span>
+<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 317</span>
     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">help_str</span>(<span class="ruby-identifier">switch_len</span>)
       <span class="ruby-node">&quot;    %-#{switch_len}s&quot;</span>  <span class="ruby-operator">%</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">switch_str</span> <span class="ruby-operator">+</span> <span class="ruby-node">&quot; \t#{@help}&quot;</span>
     <span class="ruby-keyword kw">end</span>
@@ -294,12 +290,12 @@ a single line that will be put in the overall usage string
       </div>
 
 
-      <div id="method-M000022" class="method-detail">
-        <a name="M000022"></a>
+      <div id="method-M000020" class="method-detail">
+        <a name="M000020"></a>
 
         <div class="method-heading">
 
-          <a href="#M000022" class="method-signature">
+          <a href="#M000020" class="method-signature">
 
           <span class="method-name">mandatory?</span><span class="method-args">()</span>
 
@@ -314,10 +310,10 @@ is it mandatory to see this parameter on the command line?
 </p>
 
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000022-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000022-source">
+            onclick="toggleCode('M000020-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000020-source">
 <pre>
-<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 322</span>
+<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 333</span>
     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mandatory?</span>; <span class="ruby-keyword kw">false</span>; <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
@@ -349,7 +345,7 @@ returns a list of the switches without the leading &#8217;-&#8217;s
             onclick="toggleCode('M000016-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000016-source">
 <pre>
-<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 285</span>
+<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 296</span>
     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">names</span>
       <span class="ruby-ivar">@names</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">switches</span>.<span class="ruby-identifier">map</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">s</span><span class="ruby-operator">|</span> <span class="ruby-identifier">s</span>.<span class="ruby-identifier">sub</span>(<span class="ruby-regexp re">/^-+/</span>,<span class="ruby-value str">''</span>)}
     <span class="ruby-keyword kw">end</span>
@@ -360,12 +356,12 @@ returns a list of the switches without the leading &#8217;-&#8217;s
       </div>
 
 
-      <div id="method-M000021" class="method-detail">
-        <a name="M000021"></a>
+      <div id="method-M000019" class="method-detail">
+        <a name="M000019"></a>
 
         <div class="method-heading">
 
-          <a href="#M000021" class="method-signature">
+          <a href="#M000019" class="method-signature">
 
           <span class="method-name">set_opt</span><span class="method-args">(val)</span>
 
@@ -381,80 +377,12 @@ param_options hash.
 </p>
 
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000021-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000021-source">
+            onclick="toggleCode('M000019-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000019-source">
 <pre>
-<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 317</span>
+<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 328</span>
     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">set_opt</span> <span class="ruby-identifier">val</span>
       <span class="ruby-identifier">names</span>.<span class="ruby-identifier">each</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">n</span><span class="ruby-operator">|</span> <span class="ruby-ivar">@param_options</span>[<span class="ruby-identifier">n</span>] = <span class="ruby-identifier">val</span>}
-    <span class="ruby-keyword kw">end</span>
-</pre>
-          </div>
-
-        </div>
-      </div>
-
-
-      <div id="method-M000017" class="method-detail">
-        <a name="M000017"></a>
-
-        <div class="method-heading">
-
-          <a href="#M000017" class="method-signature">
-
-          <span class="method-name">switch_len</span><span class="method-args">()</span>
-
-          </a>
-
-        </div>
-
-        <div class="method-description">
-
-          <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000017-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000017-source">
-<pre>
-<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 289</span>
-    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">switch_len</span>
-      <span class="ruby-ivar">@switches</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">', '</span>).<span class="ruby-identifier">length</span> 
-    <span class="ruby-keyword kw">end</span>
-</pre>
-          </div>
-
-        </div>
-      </div>
-
-
-      <div id="method-M000018" class="method-detail">
-        <a name="M000018"></a>
-
-        <div class="method-heading">
-
-          <a href="#M000018" class="method-signature">
-
-          <span class="method-name">switch_str</span><span class="method-args">()</span>
-
-          </a>
-
-        </div>
-
-        <div class="method-description">
-
-          <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000018-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000018-source">
-<pre>
-<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 293</span>
-    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">switch_str</span>
-      <span class="ruby-identifier">short_parms</span> = <span class="ruby-ivar">@switches</span>.<span class="ruby-identifier">find_all</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">st</span><span class="ruby-operator">|</span> <span class="ruby-identifier">st</span>.<span class="ruby-identifier">start_with?</span>(<span class="ruby-value str">'-'</span>) <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">st</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">==</span> <span class="ruby-value">2</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">st</span>[<span class="ruby-value">1</span>] <span class="ruby-operator">!=</span> <span class="ruby-value str">'-'</span>} 
-      <span class="ruby-identifier">long_parms</span> = <span class="ruby-ivar">@switches</span>.<span class="ruby-identifier">find_all</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">st</span><span class="ruby-operator">|</span> <span class="ruby-identifier">st</span>.<span class="ruby-identifier">start_with?</span>(<span class="ruby-value str">'--'</span>) <span class="ruby-keyword kw">or</span> (<span class="ruby-identifier">st</span>.<span class="ruby-identifier">start_with?</span>(<span class="ruby-value str">'-'</span>) <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">st</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">2</span>)} 
-      <span class="ruby-identifier">other_parms</span> = <span class="ruby-ivar">@switches</span>.<span class="ruby-identifier">find_all</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">st</span><span class="ruby-operator">|</span> <span class="ruby-keyword kw">not</span> <span class="ruby-identifier">st</span>.<span class="ruby-identifier">start_with?</span>(<span class="ruby-value str">'-'</span>)}
-      
-      <span class="ruby-identifier">sh_str</span> = <span class="ruby-identifier">short_parms</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-value">? </span> <span class="ruby-value str">&quot; &quot;</span> <span class="ruby-operator">*</span> <span class="ruby-value">4</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">short_parms</span>.<span class="ruby-identifier">first</span>
-      <span class="ruby-identifier">long_str</span> = <span class="ruby-identifier">long_parms</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">', '</span>) <span class="ruby-operator">+</span> <span class="ruby-identifier">other_parms</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">', '</span>)
-      <span class="ruby-identifier">sh_str</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">', '</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">sh_str</span> <span class="ruby-operator">=~</span><span class="ruby-regexp re">/^\s+$/</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">long_str</span>.<span class="ruby-identifier">empty?</span>
-
-      <span class="ruby-identifier">sh_str</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">long_str</span>
     <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
@@ -486,7 +414,7 @@ ensures that the switches is an array. Should be an array of Strings
             onclick="toggleCode('M000015-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000015-source">
 <pre>
-<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 280</span>
+<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 291</span>
     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">switches=</span>(<span class="ruby-identifier">switches</span>)
       <span class="ruby-ivar">@switches</span> = [<span class="ruby-identifier">switches</span>].<span class="ruby-identifier">flatten</span>
     <span class="ruby-keyword kw">end</span>

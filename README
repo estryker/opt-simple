@@ -15,7 +15,9 @@ There are three methods to define command line parameters:
  argument - a mandatory command line parameter with one or more arguments
 
 Inside the blocks in flag, option, and argument a shortcut function called 'set_opt'
-can be used to set an option that will be returned in the options hash.
+can be used to set an option that will be returned in the options hash. The 'accumulate_opt'
+method can be used in the option and argument blocks to create a list of values, and in 
+the flag block to increment a counter (with verbosity being the classic example). 
 
 The number of arguments are determined by the 'arity' of the block. 
 
@@ -102,6 +104,39 @@ It is recommended to install OptSimple using RubyGems:
  
  puts "ARGV"
  puts ARGV
+
+=== An example that shows how to use 'accumulate_opt' on an option to create a list, and on a flag to increment a counter
+
+require 'opt_simple'
+
+verbosity = 0
+
+options,arguments = OptSimple.new.parse_opts! do 
+  option %w[-i --infile], "Infile, multiple allowed", "INFILE" do | arg |
+    accumulate_opt arg
+  end
+
+  flag %w[-v  --verbose],"Verbosity. the more you set, the more we give" do 
+    verbosity += 1
+  end
+
+  flag %w[-m --more-cow-bell], "I've got a fever" do 
+    accumulate_opt
+  end
+end
+
+puts "Options"
+puts options.inspect
+
+puts "Arguments"
+puts arguments.inspect
+
+puts "Verbosity"
+puts verbosity
+
+puts "ARGV"
+puts ARGV
+
 
 === An example that shows that you can easily set your defaults in normal Ruby variables and provide your own help.
 

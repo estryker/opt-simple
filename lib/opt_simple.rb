@@ -297,11 +297,11 @@ class OptSimple
       @names ||= switches.map {|s| s.sub(/^-+/,'')}
     end
 
-    def switch_len
+    def switch_len #:nodoc:
       @switches.join(', ').length 
     end
 
-    def switch_str
+    def switch_str #:nodoc:
       short_parms = @switches.find_all {|st| st.start_with?('-') and st.length == 2 and st[1] != '-'} 
       long_parms = @switches.find_all {|st| st.start_with?('--') or (st.start_with?('-') and st.length > 2)} 
       other_parms = @switches.find_all {|st| not st.start_with?('-')}
@@ -353,6 +353,7 @@ class OptSimple
       end
     end
 
+    # increment the parameter by one every time it is seen on the CL
     def accumulate_opt
       names.each {|n| @param_options[n] += 1}
     end
@@ -379,15 +380,16 @@ class OptSimple
       end
     end
 
-    def switch_len
+    def switch_len #:nodoc:
       metavar_space = @metavar.empty? ? 0 : @metavar.length + 1 
       super + metavar_space
     end
 
-    def switch_str
+    def switch_str #:nodoc:
       super + " #{@metavar}"
     end
 
+    # append val to the parameter list
     def accumulate_opt(val)
       names.each {|n| @param_options[n] << val}
     end
