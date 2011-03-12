@@ -66,7 +66,7 @@ class TestHelpStatement < Test::Unit::TestCase
     assert_equal o['verbose'],4
   end
 
-  must "set last arg when duplicated by default or when set_opt is used" do 
+  must "set last arg when duplicated when accumulate opt isn't used" do 
     os = OptSimple.new({},%w[-i foo.bar --infile bar.in -i baz])
     o,a = os.parse_opts! do 
       option %w[-i --infile], "Infile, multiple allowed", "INFILE" do | arg |

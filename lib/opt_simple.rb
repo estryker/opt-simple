@@ -105,13 +105,11 @@ class OptSimple
 
 	    # we want to process the args in order to provide predictable behavior
 	    # in the case of switch duplication. 
-	    # We do it in reverse so that the slicing removes pieces from the end so we
-	    # don't disrupt the other locations. 
+	    # We do pull them out in reverse so that the slicing removes pieces from the end 
+	    # of @args, so we don't disrupt the other locations, but put them into 'chunks'
+	    # backwards to restore their order. 
 	    chunks = []
 	    arg_locations.sort.reverse.each do |loc|  
-	      # if we want the first one to win
-	      #chunks.push @args.slice!(loc .. loc + parm.block.arity)[1..-1]
-	      # if we want the last one to win:
 	      chunks.unshift @args.slice!(loc .. loc + parm.block.arity)[1..-1]
 	    end
 
