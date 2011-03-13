@@ -57,94 +57,108 @@ class OptSimple
     @banner = str
   end
 
+  # Simply register options without actually parsing them. 
+  # This allows registering parms in multiple places in your code.
+  def register_opts(&block)
+    begin
+      # call the block to register all the parameters and
+      # their corresponding code blocks
+      # We use instance_exec so that the API is cleaner. 
+      instance_exec(@options,@positional_arguments,&block) 
+    ensure
+      # we are ensuring that the options that occur before any break statement
+      # actually get parsed. 
+      
+      # add the help option at the end the first time register_opts is called
+      unless(@parameters.find {|p| p.switches.include?('-h')})
+	flag %w[-h --help] ,"(for this help message)"
+      end
+    end
+  end
+
   # Parse the options, destructively pulling them out of the args array as it goes.
   # If no block is given, then a default parser with no error checking will be run. 
   def parse_opts!(&block)
     
     if block_given?
-      # call the block to register all the parameters and
-      # their corresponding code blocks
-      # We use instance_exec so that the API is cleaner. 
-      begin
-	instance_exec(@options,@positional_arguments,&block)
-      ensure
-	# we are ensuring that the options that occur before any break statement
-	# actually get parsed. 
-	
-	# add the help option at the end
-	flag %w[-h --help] ,"(for this help message)"
-	
-	# first look for a call for help
-	unless (%w[-h --help] & @args).empty?
-	  $stdout.puts self.to_s
-	  exit(0)
-	end
-	
-	mandatory_check = mandatory_opts.map {|m| m.switches}
-
-	if(loc = @args.index('--'))
-	  #remove the '--', but don't include it w/ positional arguments
-	  @positional_arguments += @args.slice!(loc..-1)[1..-1] 
-	end
-	
-	# Handle the case where a user specifies --foo=bar, or --foo=bar,baz
-	equal_args = @args.find_all {|arg| arg.include?('=') }
-	@args.delete_if {|arg| arg.include?('=') }
-	equal_args.each do | e |
-	  switch,list = e.split('=')
-	  @args << switch
-	  list.split(',').each {|val| @args << val }
-	end
-
-	# now actually parse the args, and call all the stored up blocks from the options
-	@parameters.each do | parm |
-	  intersection = @args & parm.switches
-	  unless intersection.empty?
-	    mandatory_check.delete(parm.switches)
-	 
-	    arg_locations =  []
-	    @args.each_with_index {|arg,i| arg_locations << i if intersection.include?(arg) }
-
-	    # we want to process the args in order to provide predictable behavior
-	    # in the case of switch duplication. 
-	    # We do pull them out in reverse so that the slicing removes pieces from the end 
-	    # of @args, so we don't disrupt the other locations, but put them into 'chunks'
-	    # backwards to restore their order. 
-	    chunks = []
-	    arg_locations.sort.reverse.each do |loc|  
-	      chunks.unshift @args.slice!(loc .. loc + parm.block.arity)[1..-1]
-	    end
-
-	    chunks.each do | pieces |
-	      if pieces.length < parm.block.arity or
-		  pieces.any? {|p| p.start_with?('-')}
-		raise OptSimple::ParameterUsageError.new "Not enough args following #{intersection}",self 
-	      end
-	      
-	      begin
-		parm.instance_exec(*pieces,&parm.block)
-	      rescue OptSimple::Error => e
-		raise OptSimple::Error.new e.message,self
-	      end
-	    end
-	    
-	    @options.merge!(parm.param_options)
-	  end
-	end
-	
-	unless mandatory_check.empty?
-	  raise MissingArgument.new "Must set the following parameters: #{mandatory_check.map {|a| a.join(' OR ')}.join(', ')}",self
-	end
-
-	extra_switches = @args.find_all {|a| a.start_with?('-') }
-	raise OptSimple::InvalidOption.new "Unknown options: #{extra_switches.join(' ')}",self unless extra_switches.empty?
-	
-	@positional_arguments += @args.slice!(0..-1)
-      end
-    else
+      register_opts(&block)
+    end
+  
+    if @parameters.empty?
       #parse the @args array by looking for switches/args by regex
       default_arg_parser
-    end	
+    else
+      # go through the  registered parameters, and pull out 
+      # the specified parms from @arg
+
+      # first look for a call for help
+      unless (%w[-h --help] & @args).empty?
+	$stdout.puts self.to_s
+	exit(0)
+      end
+      
+      mandatory_check = mandatory_opts.map {|m| m.switches}
+      
+      if(loc = @args.index('--'))
+	#remove the '--', but don't include it w/ positional arguments
+	@positional_arguments += @args.slice!(loc..-1)[1..-1] 
+      end
+      
+      # Handle the case where a user specifies --foo=bar, or --foo=bar,baz
+      equal_args = @args.find_all {|arg| arg.include?('=') }
+      @args.delete_if {|arg| arg.include?('=') }
+      equal_args.each do | e |
+	switch,list = e.split('=')
+	@args << switch
+	list.split(',').each {|val| @args << val }
+      end
+      
+      # now actually parse the args, and call all the stored up blocks from the options
+      @parameters.each do | parm |
+	intersection = @args & parm.switches
+	unless intersection.empty?
+	  mandatory_check.delete(parm.switches)
+	  
+	  arg_locations =  []
+	  @args.each_with_index {|arg,i| arg_locations << i if intersection.include?(arg) }
+	  
+	  # we want to process the args in order to provide predictable behavior
+	  # in the case of switch duplication. 
+	  # We do pull them out in reverse so that the slicing removes pieces from the end 
+	  # of @args, so we don't disrupt the other locations, but put them into 'chunks'
+	  # backwards to restore their order. 
+	  chunks = []
+	  arg_locations.sort.reverse.each do |loc|  
+	    chunks.unshift @args.slice!(loc .. loc + parm.block.arity)[1..-1]
+	  end
+	  
+	  chunks.each do | pieces |
+	    if pieces.length < parm.block.arity or
+		pieces.any? {|p| p.start_with?('-')}
+	      raise OptSimple::ParameterUsageError.new "Not enough args following #{intersection}",self 
+	    end
+	    
+	    begin
+	      parm.instance_exec(*pieces,&parm.block)
+	    rescue OptSimple::Error => e
+	      raise OptSimple::Error.new e.message,self
+	    end
+	  end
+	  
+	  @options.merge!(parm.param_options)
+	end
+      end
+      
+      unless mandatory_check.empty?
+	raise MissingArgument.new "Must set the following parameters: #{mandatory_check.map {|a| a.join(' OR ')}.join(', ')}",self
+      end
+      
+      extra_switches = @args.find_all {|a| a.start_with?('-') }
+      raise OptSimple::InvalidOption.new "Unknown options: #{extra_switches.join(' ')}",self unless extra_switches.empty?
+      
+      @positional_arguments += @args.slice!(0..-1)
+    end
+    
     return [@options,@positional_arguments]
   end
 

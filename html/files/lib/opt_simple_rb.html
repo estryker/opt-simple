@@ -53,7 +53,7 @@
     </tr>
     <tr class="top-aligned-row">
       <td><strong>Last Update:</strong></td>
-      <td>2011-03-12 09:34:26 +0000</td>
+      <td>2011-03-13 23:31:45 +0000</td>
     </tr>
     </table>
   </div>
@@ -79,7 +79,9 @@ There are three methods to define command line parameters:
 <p>
 Inside the blocks in flag, option, and argument a shortcut function called
 &#8216;set_opt&#8217; can be used to set an option that will be returned in
-the options hash.
+the options hash. The &#8216;accumulate_opt&#8217; method can be used in
+the option and argument blocks to create a list of values, and in the flag
+block to increment a counter (with verbosity being the classic example).
 </p>
 <p>
 The number of arguments are determined by the &#8216;arity&#8217; of the

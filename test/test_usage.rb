@@ -55,7 +55,7 @@ class TestHelpStatement < Test::Unit::TestCase
   must "accumulate lists of args when asked" do 
     os = OptSimple.new({},%w[-i foo.bar --infile bar.in])
     o,a = os.parse_opts! do 
-      option %w[-i --infile], "Infile, multiple allowed", "INFILE" do | arg |
+      option %w[-i --infile], "Infile, multiple allowed", "FILE" do | arg |
 	accumulate_opt arg
       end
     end
@@ -78,13 +78,32 @@ class TestHelpStatement < Test::Unit::TestCase
   must "set last arg when duplicated when accumulate opt isn't used" do 
     os = OptSimple.new({},%w[-i foo.bar --infile bar.in -i baz])
     o,a = os.parse_opts! do 
-      option %w[-i --infile], "Infile, multiple allowed", "INFILE" do | arg |
+      option %w[-i --infile], "Infile, multiple allowed", "FILE" do | arg |
 	set_opt arg
       end
     end
 
     assert_equal o['i'],'baz'
     assert_equal o['infile'],'baz'
+  end
+
+  must "allow parameters to be registered in multiple spots" do 
+    os = OptSimple.new({},%w[-i foo.bar --outfile bar.out])
+    os.register_opts do 
+      option %w[-i --infile], "Infile", "FILE" do | arg |
+	set_opt arg
+      end
+    end
+
+    os.register_opts do 
+      option %w[-o --outfile], "outfile", "FILE" do | arg |
+	set_opt arg
+      end
+    end
+    o,a = os.parse_opts!
+    
+    assert_equal o['i'],'foo.bar'
+    assert_equal o['o'],'bar.out'
   end
 end
 

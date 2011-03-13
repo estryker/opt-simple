@@ -53,7 +53,7 @@
     </tr>
     <tr class="top-aligned-row">
       <td><strong>Last Update:</strong></td>
-      <td>2011-03-12 09:37:22 +0000</td>
+      <td>2011-03-13 23:37:38 +0000</td>
     </tr>
     </table>
   </div>
@@ -115,6 +115,67 @@ href="../classes/OptSimple.html">OptSimple</a> using RubyGems:
  $ sudo gem install opt-simple
 </pre>
 <h2>Examples</h2>
+<h3>One example that shows a lot of the behavior you might use</h3>
+<pre>
+ require 'opt_simple'
+
+ min = 5
+ max = 15
+
+ options,arguments = OptSimple.new.parse_opts! do
+   argument %w[-i --infile], &quot;Infile, multiple allowed&quot;, &quot;FILE&quot; do | arg |
+     accumulate_opt arg
+   end
+
+   option %w[-p --pattern --glob-pattern], &quot;glob pattern&quot;,&quot;PATTERN&quot;
+
+   option %w[-n -num --num-values],&quot;Number of val&quot;,&quot;VAL&quot; do |arg|
+     set_opt arg.to_i
+   end
+
+   option &quot;--range&quot;, &quot;range: min,max (both &gt;0) default is #{min},#{max}&quot; do | arg1,arg2 |
+     min = arg1.to_i
+     max = arg2.to_i
+
+     error &quot;max must be greater than min&quot; unless max &gt; min
+     error &quot;both must be &gt;=0&quot; if min &lt; 0
+   end
+
+   flag %w[-v  --verbose],&quot;Verbosity. the more you set, the more we give&quot; do
+     accumulate_opt
+   end
+
+ end
+
+ puts &quot;Options&quot;
+ puts options.inspect
+
+ puts &quot;Arguments&quot;
+ puts arguments.inspect
+
+ puts &quot;ARGV&quot;
+ puts ARGV
+</pre>
+<p>
+It prints out an automatic usage statement:
+</p>
+<pre>
+  Usage: opt_ex.rb [options]
+
+   MANDATORY ARGS:
+     -i, --infile FILE                           Infile, multiple allowed
+
+   OPTIONS:
+     -p, --pattern, --glob-pattern PATTERN       glob pattern
+
+     -n, -num, --num-values VAL                  Number of val
+
+         --range ARG                             range: min,max (both &gt;0) default is 5,15
+
+     -v, --verbose                               Verbosity. the more you set, the more we give
+
+     -h, --help                                  (for this help message)
+</pre>
 <h3>A very simple example with no error checking. Use at your own risk!</h3>
 <pre>
  require 'opt_simple'
@@ -182,44 +243,37 @@ href="../classes/OptSimple.html">OptSimple</a> using RubyGems:
  puts ARGV
 </pre>
 <h3>An example that shows how to use &#8216;accumulate_opt&#8217; on an option to create a list, and on a flag to increment a counter</h3>
-<p>
-require &#8216;opt_simple&#8216;
-</p>
-<p>
-verbosity = 0
-</p>
-<p>
-options,arguments = <a
-href="../classes/OptSimple.html#M000001">OptSimple.new</a>.parse_opts! do
-</p>
 <pre>
-  option %w[-i --infile], &quot;Infile, multiple allowed&quot;, &quot;INFILE&quot; do | arg |
-    accumulate_opt arg
-  end
+ require 'opt_simple'
 
-  flag %w[-v  --verbose],&quot;Verbosity. the more you set, the more we give&quot; do
-    verbosity += 1
-  end
+ verbosity = 0
 
-  flag %w[-m --more-cow-bell], &quot;I've got a fever&quot; do
-    accumulate_opt
-  end
+ options,arguments = OptSimple.new.parse_opts! do
+   option %w[-i --infile], &quot;Infile, multiple allowed&quot;, &quot;FILE&quot; do | arg |
+     accumulate_opt arg
+   end
+
+   flag %w[-v  --verbose],&quot;Verbosity. the more you set, the more we give&quot; do
+     verbosity += 1
+   end
+
+   flag %w[-m --more-cow-bell], &quot;I've got a fever&quot; do
+     accumulate_opt
+   end
+ end
+
+ puts &quot;Options&quot;
+ puts options.inspect
+
+ puts &quot;Arguments&quot;
+ puts arguments.inspect
+
+ puts &quot;Verbosity&quot;
+ puts verbosity
+
+ puts &quot;ARGV&quot;
+ puts ARGV
 </pre>
-<p>
-end
-</p>
-<p>
-puts &#8220;Options&#8221; puts options.inspect
-</p>
-<p>
-puts &#8220;Arguments&#8221; puts arguments.inspect
-</p>
-<p>
-puts &#8220;Verbosity&#8221; puts verbosity
-</p>
-<p>
-puts &#8220;ARGV&#8221; puts ARGV
-</p>
 <h3>An example that shows that you can easily set your defaults in normal Ruby variables and provide your own help.</h3>
 <pre>
  require 'opt_simple'
@@ -267,6 +321,52 @@ puts &#8220;ARGV&#8221; puts ARGV
  puts &quot;min #{min}&quot;
  puts &quot;max #{max}&quot;
  puts &quot;pattern #{pattern}&quot;
+
+ puts &quot;ARGV&quot;
+ puts ARGV
+</pre>
+<h3>An example showing how to register parms in multiple places before parsing the command line</h3>
+<pre>
+ require 'opt_simple'
+
+ min = 5
+ max = 15
+
+ os = OptSimple.new
+
+ os.register_opts do
+   argument %w[-i --infile], &quot;Infile, multiple allowed&quot;, &quot;FILE&quot; do | arg |
+     accumulate_opt arg
+   end
+
+   option %w[-p --pattern --glob-pattern], &quot;glob pattern&quot;,&quot;PATTERN&quot;
+ end
+
+ os.register_opts do
+   option %w[-n -num --num-values],&quot;Number of val&quot;,&quot;VAL&quot; do |arg|
+     set_opt arg.to_i
+   end
+
+   option &quot;--range&quot;, &quot;range: min,max (both &gt;0) default is #{min},#{max}&quot; do | arg1,arg2 |
+     min = arg1.to_i
+     max = arg2.to_i
+
+     error &quot;max must be greater than min&quot; unless max &gt; min
+     error &quot;both must be &gt;=0&quot; if min &lt; 0
+   end
+
+   flag %w[-v  --verbose],&quot;Verbosity. the more you set, the more we give&quot; do
+     accumulate_opt
+   end
+ end
+
+ options,arguments = os.parse_opts!
+
+ puts &quot;Options&quot;
+ puts options.inspect
+
+ puts &quot;Arguments&quot;
+ puts arguments.inspect
 
  puts &quot;ARGV&quot;
  puts ARGV

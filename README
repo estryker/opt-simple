@@ -37,6 +37,66 @@ It is recommended to install OptSimple using RubyGems:
 
 == Examples
 
+=== One example that shows a lot of the behavior you might use
+
+ require 'opt_simple'
+ 
+ min = 5
+ max = 15
+ 
+ options,arguments = OptSimple.new.parse_opts! do 
+   argument %w[-i --infile], "Infile, multiple allowed", "FILE" do | arg |
+     accumulate_opt arg
+   end
+ 
+   option %w[-p --pattern --glob-pattern], "glob pattern","PATTERN"
+ 
+   option %w[-n -num --num-values],"Number of val","VAL" do |arg|
+     set_opt arg.to_i
+   end
+   
+   option "--range", "range: min,max (both >0) default is #{min},#{max}" do | arg1,arg2 |
+     min = arg1.to_i
+     max = arg2.to_i    
+      
+     error "max must be greater than min" unless max > min
+     error "both must be >=0" if min < 0
+   end
+ 
+   flag %w[-v  --verbose],"Verbosity. the more you set, the more we give" do 
+     accumulate_opt
+   end
+ 
+ end
+ 
+ puts "Options"
+ puts options.inspect
+ 
+ puts "Arguments"
+ puts arguments.inspect
+
+ puts "ARGV"
+ puts ARGV
+
+It prints out an automatic usage statement:
+
+  Usage: opt_ex.rb [options]
+ 
+   MANDATORY ARGS:
+     -i, --infile FILE                           Infile, multiple allowed
+
+   OPTIONS:
+     -p, --pattern, --glob-pattern PATTERN       glob pattern
+
+     -n, -num, --num-values VAL                  Number of val
+
+         --range ARG                             range: min,max (both >0) default is 5,15
+
+     -v, --verbose                               Verbosity. the more you set, the more we give
+
+     -h, --help                                  (for this help message)
+
+
 === A very simple example with no error checking. Use at your own risk!
 
  require 'opt_simple'
@@ -46,7 +106,7 @@ It is recommended to install OptSimple using RubyGems:
  } 
  
  options,arguments = OptSimple.new(defaults).parse_opts! 
-
+ 
  puts "Options"
  puts options.inspect
  
@@ -107,46 +167,46 @@ It is recommended to install OptSimple using RubyGems:
 
 === An example that shows how to use 'accumulate_opt' on an option to create a list, and on a flag to increment a counter
 
-require 'opt_simple'
-
-verbosity = 0
-
-options,arguments = OptSimple.new.parse_opts! do 
-  option %w[-i --infile], "Infile, multiple allowed", "INFILE" do | arg |
-    accumulate_opt arg
-  end
-
-  flag %w[-v  --verbose],"Verbosity. the more you set, the more we give" do 
-    verbosity += 1
-  end
-
-  flag %w[-m --more-cow-bell], "I've got a fever" do 
-    accumulate_opt
-  end
-end
-
-puts "Options"
-puts options.inspect
-
-puts "Arguments"
-puts arguments.inspect
-
-puts "Verbosity"
-puts verbosity
-
-puts "ARGV"
-puts ARGV
-
-
-=== An example that shows that you can easily set your defaults in normal Ruby variables and provide your own help.
-
  require 'opt_simple'
  
+ verbosity = 0
+ 
+ options,arguments = OptSimple.new.parse_opts! do 
+   option %w[-i --infile], "Infile, multiple allowed", "FILE" do | arg |
+     accumulate_opt arg
+   end
+ 
+   flag %w[-v  --verbose],"Verbosity. the more you set, the more we give" do 
+     verbosity += 1
+   end
+ 
+   flag %w[-m --more-cow-bell], "I've got a fever" do 
+     accumulate_opt
+   end
+ end
+ 
+ puts "Options"
+ puts options.inspect
+ 
+ puts "Arguments"
+ puts arguments.inspect
+ 
+ puts "Verbosity"
+ puts verbosity
+ 
+ puts "ARGV"
+ puts ARGV
+ 
+ 
+=== An example that shows that you can easily set your defaults in normal Ruby variables and provide your own help.
+ 
+ require 'opt_simple'
+  
  in_file = nil
  min = 0
  max = 10
  pattern = "*"
-
+ 
  usage_string = <<-UL
  Usage: $0 [options]
  
@@ -155,12 +215,12 @@ puts ARGV
   [-p, --pattern, --glob-pattern (default #{pattern})]
   [-v (verbose)]
   [-h, --help (help)]
-
+ 
  UL
-
+ 
  OptSimple.new.parse_opts! do 
    help usage_string
-
+ 
    argument %w[-i --infile],"inFile" do |arg|
      in_file = arg
      error "inFile must exist and be readable" unless(File.readable?(in_file))
@@ -188,8 +248,56 @@ puts ARGV
  
  puts "ARGV"
  puts ARGV
+  
+=== An example showing how to register parms in multiple places before parsing the command line
+
+ require 'opt_simple'
+ 
+ min = 5
+ max = 15
+ 
+ os = OptSimple.new
+ 
+ os.register_opts do 
+   argument %w[-i --infile], "Infile, multiple allowed", "FILE" do | arg |
+     accumulate_opt arg
+   end
+ 
+   option %w[-p --pattern --glob-pattern], "glob pattern","PATTERN"
+ end
+ 
+ os.register_opts do 
+   option %w[-n -num --num-values],"Number of val","VAL" do |arg|
+     set_opt arg.to_i
+   end
+ 
+   option "--range", "range: min,max (both >0) default is #{min},#{max}" do | arg1,arg2 |
+     min = arg1.to_i
+     max = arg2.to_i    
+      
+     error "max must be greater than min" unless max > min
+     error "both must be >=0" if min < 0
+   end
+ 
+   flag %w[-v  --verbose],"Verbosity. the more you set, the more we give" do 
+     accumulate_opt
+   end
+ end
+ 
+ options,arguments = os.parse_opts!
+ 
+ puts "Options"
+ puts options.inspect
+ 
+ puts "Arguments"
+ puts arguments.inspect
+ 
+ puts "ARGV"
+ puts ARGV
+ 
  
 == Questions and/or Comments
-
+ 
 email {Ethan Stryker}[mailto:e.stryker@gmail.com]
-
+ 
+ 
