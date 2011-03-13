@@ -8,20 +8,29 @@ class TestHelpStatement < Test::Unit::TestCase
     assert_raise(OptSimple::Error) { OptSimple.new.parse_opts! {option %w[-a --awesome]; flag '-awesome' } }
   end
 
-  must "raise error when unknown option is given" do 
-    os = OptSimple.new({},['-not-specified'])
-    assert_raise(OptSimple::InvalidOption) { os.parse_opts! { option %w[-a --awesome]  }  }
-  end
-
-  must "raise error when not enough arguments are given" do
-    os = OptSimple.new({},['-a'])
+  must "throw parameter missing exception when the argument method is used but the parm isn't specified" do
+    os = OptSimple.new({})
     assert_raise(OptSimple::MissingArgument) do
       os.parse_opts! do
-	option '-a' do |arg| 
+	argument '-a'
+      end
+    end
+  end
+
+  must "throw missing parameter usage error when a parameter isn't followed by enough arguments" do
+    os = OptSimple.new({},['-a'])
+    assert_raise(OptSimple::ParameterUsageError) do
+      os.parse_opts! do
+	argument '-a' do |arg| 
 	  nil
 	end
       end
     end
+  end
+  
+  must "raise error when unknown option is given" do 
+    os = OptSimple.new({},['-not-specified'])
+    assert_raise(OptSimple::InvalidOption) { os.parse_opts! { option %w[-a --awesome]  }  }
   end
 
   must "handle arguments with equals and commas" do

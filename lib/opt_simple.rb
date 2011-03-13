@@ -12,7 +12,9 @@ There are three methods to define command line parameters:
  argument - a mandatory command line parameter with one or more arguments
 
 Inside the blocks in flag, option, and argument a shortcut function called 'set_opt'
-can be used to set an option that will be returned in the options hash.
+can be used to set an option that will be returned in the options hash. The 'accumulate_opt'
+method can be used in the option and argument blocks to create a list of values, and in 
+the flag block to increment a counter (with verbosity being the classic example). 
 
 The number of arguments are determined by the 'arity' of the block. 
 
@@ -79,7 +81,7 @@ class OptSimple
 	end
 	
 	mandatory_check = mandatory_opts.map {|m| m.switches}
-	
+
 	if(loc = @args.index('--'))
 	  #remove the '--', but don't include it w/ positional arguments
 	  @positional_arguments += @args.slice!(loc..-1)[1..-1] 
@@ -96,9 +98,9 @@ class OptSimple
 
 	# now actually parse the args, and call all the stored up blocks from the options
 	@parameters.each do | parm |
-	  mandatory_check.delete(parm.switches)
 	  intersection = @args & parm.switches
 	  unless intersection.empty?
+	    mandatory_check.delete(parm.switches)
 	 
 	    arg_locations =  []
 	    @args.each_with_index {|arg,i| arg_locations << i if intersection.include?(arg) }
@@ -116,7 +118,7 @@ class OptSimple
 	    chunks.each do | pieces |
 	      if pieces.length < parm.block.arity or
 		  pieces.any? {|p| p.start_with?('-')}
-		raise OptSimple::MissingArgument.new "Not enough args following #{intersection}",self 
+		raise OptSimple::ParameterUsageError.new "Not enough args following #{intersection}",self 
 	      end
 	      
 	      begin
@@ -420,9 +422,13 @@ class OptSimple
   # is used on the command line
   class InvalidOption < Error;end
 
-  # An exception thrown if a mandatory parameter is not
+  # An exception thrown  if a mandatory parameter is not
   # used on the command line
   class MissingArgument < Error;end
+
+  # An exception thrown if a parameter isn't followed by enough arguments
+  # on the command line
+  class ParameterUsageError < Error;end
 
 end
  
