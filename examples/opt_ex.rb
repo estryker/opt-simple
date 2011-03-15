@@ -5,10 +5,12 @@ $LOAD_PATH.unshift File.dirname($PROGRAM_NAME) + '/../lib/'
 
 require 'opt_simple'
 
-options,arguments = OptSimple.new.parse_opts! do | opts,tgts |
-  argument "-i","inFile" do |arg|
-    in_file = arg
-    op.error "inFile must exist and be readable" unless(File.readable?(in_file))
+min = 5
+max = 10
+options = OptSimple.new.parse_opts! do
+  argument %w[-i --infile],"input file","FILE" do |arg|
+    error "inFile must exist and be readable" unless(File.readable?(arg))
+    set_opt arg
   end
   
   option %w[-p --pattern --glob-pattern], "glob pattern"
@@ -17,7 +19,7 @@ options,arguments = OptSimple.new.parse_opts! do | opts,tgts |
 
   flag "-whatever"
 
-  argument ["--range"], "range: min,max (both >0)" do | arg1,arg2 |
+  option ["--range"], "both > 0, defaults are #{min},#{max}","MIN,MAX" do | arg1,arg2 |
     min = arg1.to_i
     max = arg2.to_i    
     
@@ -27,7 +29,4 @@ options,arguments = OptSimple.new.parse_opts! do | opts,tgts |
 end
 
 puts "Options"
-puts options.inspect
-
-puts "Arguments"
-puts arguments.inspect
+puts options

@@ -9,7 +9,7 @@ require 'opt_simple'
 
 verbosity = 0
 
-options,arguments = OptSimple.new.parse_opts! do 
+options = OptSimple.new.parse_opts! do 
   option %w[-i --infile], "Infile, multiple allowed", "INFILE" do | arg |
     accumulate_opt arg
   end
@@ -25,13 +25,8 @@ options,arguments = OptSimple.new.parse_opts! do
 end
 
 puts "Options"
-puts options.inspect
-
-puts "Arguments"
-puts arguments.inspect
+puts options
 
 puts "Verbosity"
 puts verbosity
 
-puts "ARGV"
-puts ARGV

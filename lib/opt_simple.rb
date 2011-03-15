@@ -33,9 +33,10 @@ class OptSimple
     @optional_opts = []
     @parameters = []
     @param_names = {}
+    @results = OptSimple::Result.new
     @longest_switch_len = 0 
-    @options = defaults.dup # not sure if I have to dup this
-    @positional_arguments = []
+    @defaults = defaults
+    @positional_args = []
     @args = args
     @banner = "Usage: #{File.basename($0)} [options]"
     @summary = ""
@@ -60,20 +61,10 @@ class OptSimple
   # Simply register options without actually parsing them. 
   # This allows registering parms in multiple places in your code.
   def register_opts(&block)
-    begin
-      # call the block to register all the parameters and
-      # their corresponding code blocks
-      # We use instance_exec so that the API is cleaner. 
-      instance_exec(@options,@positional_arguments,&block) 
-    ensure
-      # we are ensuring that the options that occur before any break statement
-      # actually get parsed. 
-      
-      # add the help option at the end the first time register_opts is called
-      unless(@parameters.find {|p| p.switches.include?('-h')})
-	flag %w[-h --help] ,"(for this help message)"
-      end
-    end
+    # call the block to register all the parameters and
+    # their corresponding code blocks
+    # We use instance_exec so that the API is cleaner. 
+    instance_exec(@results,&block) 
   end
 
   # Parse the options, destructively pulling them out of the args array as it goes.
@@ -83,6 +74,14 @@ class OptSimple
     if block_given?
       register_opts(&block)
     end
+
+    # add the help option at the end, but only use -h if it hasn't been used
+    # already (cuz we're that nice).
+    help_strings = %w[-h --help]
+    if(@parameters.find {|p| p.switches.include?('-h')})
+      help_strings = %w[--help]
+    end
+    flag help_strings ,"(for this help message)"
   
     if @parameters.empty?
       #parse the @args array by looking for switches/args by regex
@@ -92,7 +91,7 @@ class OptSimple
       # the specified parms from @arg
 
       # first look for a call for help
-      unless (%w[-h --help] & @args).empty?
+      unless (help_strings & @args).empty?
 	$stdout.puts self.to_s
 	exit(0)
       end
@@ -101,7 +100,7 @@ class OptSimple
       
       if(loc = @args.index('--'))
 	#remove the '--', but don't include it w/ positional arguments
-	@positional_arguments += @args.slice!(loc..-1)[1..-1] 
+	@positional_args += @args.slice!(loc..-1)[1..-1] 
       end
       
       # Handle the case where a user specifies --foo=bar, or --foo=bar,baz
@@ -118,7 +117,16 @@ class OptSimple
 	intersection = @args & parm.switches
 	unless intersection.empty?
 	  mandatory_check.delete(parm.switches)
+	  parm.param_options.add_alias(parm.names)
 	  
+	  default_switches = @defaults.keys & parm.names
+	  if default_switches.length > 1
+	    raise OptSimple::Error "Clashes in the defaults for #{parm.switches}"
+	  elsif default_switches.length == 1
+	    # set the default value before we see what is on the CL
+	    parm.param_options[default_switches.first] = @defaults[default_switches.first]
+	  end
+
 	  arg_locations =  []
 	  @args.each_with_index {|arg,i| arg_locations << i if intersection.include?(arg) }
 	  
@@ -145,7 +153,7 @@ class OptSimple
 	    end
 	  end
 	  
-	  @options.merge!(parm.param_options)
+	  @results.merge! parm.param_options
 	end
       end
       
@@ -156,10 +164,11 @@ class OptSimple
       extra_switches = @args.find_all {|a| a.start_with?('-') }
       raise OptSimple::InvalidOption.new "Unknown options: #{extra_switches.join(' ')}",self unless extra_switches.empty?
       
-      @positional_arguments += @args.slice!(0..-1)
+      @positional_args += @args.slice!(0..-1)
     end
-    
-    return [@options,@positional_arguments]
+
+    @results.positional_args = @positional_args
+    return @results
   end
 
   # Parse the options in a non-destructive way to the args array passed in.
@@ -178,18 +187,18 @@ class OptSimple
     @args.each_with_index do |arg,loc|
       if arg == '--'
 	# end of flag marker
-	@positional_args += @args[i+1 .. -1]
+	@results.positional_args += @args[i+1 .. -1]
 	break
       elsif arg =~ /^-+(.*)/
 	# assume flags are boolean
-	@options[$1] = true
+	@results[$1] = true
 	flag = $1
       elsif flag
 	# unless followed by an arg
-	@options[flag] = arg
+	@results[flag] = arg
 	flag = nil
       else
-	@positional_args << arg
+	@results.positional_args << arg
       end
     end
     @args.slice!(0..-1)
@@ -244,20 +253,19 @@ class OptSimple
       
       help_str << "  MANDATORY ARGS:\n" unless mandatory_opts.empty?
       mandatory_opts.each do | parm |
-	help_str << parm.help_str(@longest_switch_len) << "\n"
+	help_str << parm.help_str(@longest_switch_len) << "\n\n"
       end 
-      help_str << "\n" unless mandatory_opts.empty?
       
       help_str << "  OPTIONS:\n" unless  optional_opts.empty?
       optional_opts.each do | parm |
 	help_str << parm.help_str(@longest_switch_len)
 	
 	# check to see if we have any defaults set to help in the help doc
-	intersection = @options.keys & parm.names
+	intersection = @defaults.keys & parm.names
 	if intersection.empty?
 	  help_str << "\n\n"
 	else
-	  help_str << " (default is #{@options[intersection.first]})\n\n"
+	  help_str << " (default is #{@defaults[intersection.first]})\n\n"
 	end
       end
       help_str << "  SUMMARY:\n\n    #{@summary}\n\n" unless @summary.empty?
@@ -299,8 +307,9 @@ class OptSimple
       self.switches = switches
       @help = help
       @block = block
-      @param_options = {}
+      @param_options = OptSimple::Result.new
       @names = nil
+      @param_options.add_alias(self.names)
     end
 
     # ensures that the switches is an array. Should be an array of Strings
@@ -340,9 +349,10 @@ class OptSimple
     end
 
     # A utility function that sets all the names to the specified value
-    # in the param_options hash. 
+    # in the param_options data structure. 
     def set_opt val
-      names.each {|n| @param_options[n] = val}
+      # all the other values are aliased, so we only need to set the first
+      @param_options[names.first] = val
     end
 
     # is it mandatory to see this parameter on the command line?
@@ -363,15 +373,15 @@ class OptSimple
     def initialize(switches,help="",&block)
       super(switches,help,&block)
       if block_given?
-	names.each {|n| @param_options[n] = 0 }
+	@param_options[names.first] = 0
       else
-	@block = Proc.new { names.each {|n| @param_options[n] = true}}
+	@block = Proc.new { @param_options[names.first] = true}
       end
     end
-
+    
     # increment the parameter by one every time it is seen on the CL
     def accumulate_opt
-      names.each {|n| @param_options[n] += 1}
+      @param_options[names.first] += 1
     end
 
   end
@@ -390,9 +400,9 @@ class OptSimple
       super(switches,help,&block)
       @metavar = metavar
       if block_given?
-	names.each {|n| @param_options[n] = []}
+	@param_options[names.first] = []
       else
-	@block = Proc.new {|arg| names.each {|n| @param_options[n] = arg}}
+	@block = Proc.new {|arg| @param_options[names.first] = arg}
       end
     end
 
@@ -407,7 +417,7 @@ class OptSimple
 
     # append val to the parameter list
     def accumulate_opt(val)
-      names.each {|n| @param_options[n] << val}
+      @param_options[names.first] << val
     end
 
   end
@@ -444,5 +454,89 @@ class OptSimple
   # on the command line
   class ParameterUsageError < Error;end
 
+  # The results after parsing the CL in a hash-like object with method
+  # syntax for getters/setters as well. Each result that belong to the same 
+  # Parameter are aliased to keep consistent
+  class Result
+    attr_accessor :positional_args
+    
+    def initialize
+      @name_to_aliases = {}
+      @inside_hash = {}
+      @positional_args = []
+    end
+    
+    # hash notation setter
+    def []=(key,value)
+      if @name_to_aliases.has_key?(key)
+	@inside_hash[@name_to_aliases[key]] = value
+      else
+	add_alias(key) 
+	@inside_hash[[key].flatten] = value
+      end
+    end
+    
+    # hash notation getter
+    def [](key)
+      @inside_hash[@name_to_aliases[key]]
+    end
+    
+    # add a list of items that should be treated as the same key
+    def add_alias(list)
+      alias_list = [list].flatten
+      alias_list.each do | item |
+	@name_to_aliases[item] = alias_list
+	@name_to_aliases[item.to_s] = alias_list
+	@name_to_aliases[item.to_sym] = alias_list
+      end
+    end
+    
+    # copy the values from hash into this Result object
+    def add_vals_from_hash(hash)
+      hash.keys.each { |k| self[k] = hash[k] }
+    end
+    
+    # merge non-destructively, and return the result
+    def merge(other)
+      r = Result.new
+      r.merge! self
+      r.merge! other
+    end
+
+    # merge into this Result and return the result
+    def merge!(other)
+      other.aliases.each do | a | 
+	add_alias(a)
+	self[a.first] =  other[a.first]
+      end
+    end
+
+    # a list of all the aliases
+    def aliases
+      @name_to_aliases.values.uniq
+    end
+
+    # this allows for method calls for getters/setters
+    def method_missing(sym,*args,&block)
+      sym_str = sym.to_s
+      if @name_to_aliases.has_key?(sym)
+	return @inside_hash[@name_to_aliases[sym]]
+      elsif sym_str.end_with?('=') and
+	  @name_to_aliases.has_key?(sym_str[0..-2])
+	@inside_hash[@name_to_aliases[sym_str[0..-2]]] = args.first
+      else
+	super(sym,*args,&block)
+      end
+    end
+
+    # a hash looking return string.
+    def to_s
+      ret = ""
+      aliases.each do | a |
+	ret << "#{a}=>#{@inside_hash[a]},"
+      end
+      return "{#{ret[0..-2]}}\n#{@positional_args.inspect}\n"
+    end
+  end
 end
  

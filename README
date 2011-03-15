@@ -38,13 +38,12 @@ It is recommended to install OptSimple using RubyGems:
 == Examples
 
 === One example that shows a lot of the behavior you might use
+require 'opt_simple'
 
- require 'opt_simple'
- 
  min = 5
  max = 15
  
- options,arguments = OptSimple.new.parse_opts! do 
+ options = OptSimple.new.parse_opts! do 
    argument %w[-i --infile], "Infile, multiple allowed", "FILE" do | arg |
      accumulate_opt arg
    end
@@ -54,7 +53,7 @@ It is recommended to install OptSimple using RubyGems:
    option %w[-n -num --num-values],"Number of val","VAL" do |arg|
      set_opt arg.to_i
    end
-   
+ 
    option "--range", "range: min,max (both >0) default is #{min},#{max}" do | arg1,arg2 |
      min = arg1.to_i
      max = arg2.to_i    
@@ -70,20 +69,13 @@ It is recommended to install OptSimple using RubyGems:
  end
  
  puts "Options"
- puts options.inspect
+ puts options
  
- puts "Arguments"
- puts arguments.inspect
-
- puts "ARGV"
- puts ARGV
-
-It prints out an automatic usage statement:
-
-  Usage: opt_ex.rb [options]
- 
+Which prints out an automatic usage statement:
+ Usage: opt_ex.rb [options]
+                                                                                                                                                             
    MANDATORY ARGS:
-     -i, --infile FILE                           Infile, multiple allowed
+     -i, --infile FILE                           Infile, multiple allowed                                                                                     
 
    OPTIONS:
      -p, --pattern, --glob-pattern PATTERN       glob pattern
@@ -105,23 +97,16 @@ It prints out an automatic usage statement:
  'max' => 40
  } 
  
- options,arguments = OptSimple.new(defaults).parse_opts! 
+ options = OptSimple.new(defaults).parse_opts! 
  
  puts "Options"
- puts options.inspect
- 
- puts "Arguments"
- puts arguments.inspect
- 
- puts "ARGV"
- puts ARGV
- 
+ puts options
  
 === An example that provides error checking on ARGV, using all default behavior and how to specify a 'metavar'
  
  require 'opt_simple'
  
- options,arguments = OptSimple.new.parse_opts! do 
+ options = OptSimple.new.parse_opts! do 
    argument "-i","inFile","FILE"
    option %w[-p --pattern --glob-pattern], "glob pattern","PATTERN"
    flag "-v","Verbose"
@@ -129,14 +114,7 @@ It prints out an automatic usage statement:
  end
  
  puts "Options"
- puts options.inspect
- 
- puts "Arguments"
- puts arguments.inspect
- 
- puts "ARGV"
- puts ARGV
-
+ puts options
 
 === An example that shows how to use 'set_opt', set the banner string, and add a summary.
 
@@ -146,7 +124,7 @@ It prints out an automatic usage statement:
    "max" => 10
  }
  
- options,arguments = OptSimple.new(defaults).parse_opts! do 
+ options = OptSimple.new(defaults).parse_opts! do 
    banner "USAGE: #{$0}"
    summary "Show how to set a banner and summary."
  
@@ -157,13 +135,7 @@ It prints out an automatic usage statement:
  end
  
  puts "Options"
- puts options.inspect
- 
- puts "Arguments"
- puts arguments.inspect
- 
- puts "ARGV"
- puts ARGV
+ puts options
 
 === An example that shows how to use 'accumulate_opt' on an option to create a list, and on a flag to increment a counter
 
@@ -171,7 +143,7 @@ It prints out an automatic usage statement:
  
  verbosity = 0
  
- options,arguments = OptSimple.new.parse_opts! do 
+ options = OptSimple.new.parse_opts! do 
    option %w[-i --infile], "Infile, multiple allowed", "FILE" do | arg |
      accumulate_opt arg
    end
@@ -186,17 +158,7 @@ It prints out an automatic usage statement:
  end
  
  puts "Options"
- puts options.inspect
- 
- puts "Arguments"
- puts arguments.inspect
- 
- puts "Verbosity"
- puts verbosity
- 
- puts "ARGV"
- puts ARGV
- 
+ puts options
  
 === An example that shows that you can easily set your defaults in normal Ruby variables and provide your own help.
  
@@ -284,17 +246,10 @@ It prints out an automatic usage statement:
    end
  end
  
- options,arguments = os.parse_opts!
+ options = os.parse_opts!
  
  puts "Options"
- puts options.inspect
- 
- puts "Arguments"
- puts arguments.inspect
- 
- puts "ARGV"
- puts ARGV
- 
+ puts options
  
 == Questions and/or Comments
  

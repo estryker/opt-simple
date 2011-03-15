@@ -13,13 +13,13 @@ class ArglistTest < Test::Unit::TestCase
   end
 
   must "put all args after the dash dash in the pos argument list" do
-    options,arguments = @os.parse_opts &@block
-    assert arguments.include? '-infile4' and arguments.include? 'infile5'
+    options = @os.parse_opts &@block
+    assert options.positional_args.include? '-infile4' and options.positional_args.include? 'infile5'
   end
 
   must "return all positional args in the arguments list" do 
-    options,arguments = @os.parse_opts &@block
-    assert_equal arguments.sort,%w[infile1 infile2 infile3 -infile4 infile5].sort
+    options = @os.parse_opts &@block
+    assert_equal options.positional_args.sort,%w[infile1 infile2 infile3 -infile4 infile5].sort
   end
 
   must "empty out ARGV when using parse_opts!" do

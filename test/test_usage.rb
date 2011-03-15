@@ -37,7 +37,7 @@ class TestHelpStatement < Test::Unit::TestCase
     os = OptSimple.new({},['-a=2','--foo=4,5'])
     x = nil
     y = nil
-    opts, args = os.parse_opts! do
+    opts= os.parse_opts! do
       option '-a' do |arg| 
 	set_opt arg.to_i
       end
@@ -54,7 +54,7 @@ class TestHelpStatement < Test::Unit::TestCase
 
   must "accumulate lists of args when asked" do 
     os = OptSimple.new({},%w[-i foo.bar --infile bar.in])
-    o,a = os.parse_opts! do 
+    o = os.parse_opts! do 
       option %w[-i --infile], "Infile, multiple allowed", "FILE" do | arg |
 	accumulate_opt arg
       end
@@ -66,7 +66,7 @@ class TestHelpStatement < Test::Unit::TestCase
 
   must "accumulate numbers of flags set when asked" do 
     os = OptSimple.new({},%w[-v -v --verbose -v])
-    o,a = os.parse_opts! do 
+    o = os.parse_opts! do 
       flag %w[-v  --verbose],"Verbosity. the more you set, the more we give" do 
 	accumulate_opt
       end
@@ -77,7 +77,7 @@ class TestHelpStatement < Test::Unit::TestCase
 
   must "set last arg when duplicated when accumulate opt isn't used" do 
     os = OptSimple.new({},%w[-i foo.bar --infile bar.in -i baz])
-    o,a = os.parse_opts! do 
+    o = os.parse_opts! do 
       option %w[-i --infile], "Infile, multiple allowed", "FILE" do | arg |
 	set_opt arg
       end
@@ -100,7 +100,7 @@ class TestHelpStatement < Test::Unit::TestCase
 	set_opt arg
       end
     end
-    o,a = os.parse_opts!
+    o = os.parse_opts!
     
     assert_equal o['i'],'foo.bar'
     assert_equal o['o'],'bar.out'

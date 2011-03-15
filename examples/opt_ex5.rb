@@ -11,7 +11,7 @@ defaults = {
   "max" => 10
 }
 
-options,arguments = OptSimple.new(defaults).parse_opts! do 
+options = OptSimple.new(defaults).parse_opts! do 
   banner "USAGE: #{$0}"
   summary "Show how to set a banner and summary."
 
@@ -22,10 +22,4 @@ options,arguments = OptSimple.new(defaults).parse_opts! do
 end
 
 puts "Options"
-puts options.inspect
-
-puts "Arguments"
-puts arguments.inspect
-
-puts "ARGV"
-puts ARGV
+puts options

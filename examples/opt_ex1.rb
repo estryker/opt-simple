@@ -11,13 +11,7 @@ defaults = {
 'max' => 40
 }
 
-options,arguments = OptSimple.new(defaults).parse_opts!
+options = OptSimple.new(defaults).parse_opts!
 
 puts "Options"
-puts options.inspect
-
-puts "Arguments"
-puts arguments.inspect
-
-puts "ARGV"
-puts ARGV
+puts options
