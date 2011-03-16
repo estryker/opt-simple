@@ -70,6 +70,10 @@ require 'opt_simple'
  
  puts "Options"
  puts options
+ # access the results using method names or hash syntax 
+ puts options.pattern
+ puts options[:p]
+ puts options['glob-pattern']
  
 Which prints out an automatic usage statement:
  Usage: opt_ex.rb [options]

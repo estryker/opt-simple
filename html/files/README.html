@@ -53,7 +53,7 @@
     </tr>
     <tr class="top-aligned-row">
       <td><strong>Last Update:</strong></td>
-      <td>2011-03-13 23:37:38 +0000</td>
+      <td>2011-03-16 18:38:19 +0000</td>
     </tr>
     </table>
   </div>
@@ -116,13 +116,14 @@ href="../classes/OptSimple.html">OptSimple</a> using RubyGems:
 </pre>
 <h2>Examples</h2>
 <h3>One example that shows a lot of the behavior you might use</h3>
+<p>
+require &#8216;opt_simple&#8216;
+</p>
 <pre>
- require 'opt_simple'
-
  min = 5
  max = 15
 
- options,arguments = OptSimple.new.parse_opts! do
+ options = OptSimple.new.parse_opts! do
    argument %w[-i --infile], &quot;Infile, multiple allowed&quot;, &quot;FILE&quot; do | arg |
      accumulate_opt arg
    end
@@ -148,19 +149,17 @@ href="../classes/OptSimple.html">OptSimple</a> using RubyGems:
  end
 
  puts &quot;Options&quot;
- puts options.inspect
-
- puts &quot;Arguments&quot;
- puts arguments.inspect
-
- puts &quot;ARGV&quot;
- puts ARGV
+ puts options
+ # access the results using method names or hash syntax
+ puts options.pattern
+ puts options[:p]
+ puts options['glob-pattern']
 </pre>
 <p>
-It prints out an automatic usage statement:
+Which prints out an automatic usage statement:
 </p>
 <pre>
-  Usage: opt_ex.rb [options]
+ Usage: opt_ex.rb [options]
 
    MANDATORY ARGS:
      -i, --infile FILE                           Infile, multiple allowed
@@ -184,22 +183,16 @@ It prints out an automatic usage statement:
  'max' =&gt; 40
  }
 
- options,arguments = OptSimple.new(defaults).parse_opts!
+ options = OptSimple.new(defaults).parse_opts!
 
  puts &quot;Options&quot;
- puts options.inspect
-
- puts &quot;Arguments&quot;
- puts arguments.inspect
-
- puts &quot;ARGV&quot;
- puts ARGV
+ puts options
 </pre>
 <h3>An example that provides error checking on ARGV, using all default behavior and how to specify a &#8216;metavar&#8217;</h3>
 <pre>
  require 'opt_simple'
 
- options,arguments = OptSimple.new.parse_opts! do
+ options = OptSimple.new.parse_opts! do
    argument &quot;-i&quot;,&quot;inFile&quot;,&quot;FILE&quot;
    option %w[-p --pattern --glob-pattern], &quot;glob pattern&quot;,&quot;PATTERN&quot;
    flag &quot;-v&quot;,&quot;Verbose&quot;
@@ -207,13 +200,7 @@ It prints out an automatic usage statement:
  end
 
  puts &quot;Options&quot;
- puts options.inspect
-
- puts &quot;Arguments&quot;
- puts arguments.inspect
-
- puts &quot;ARGV&quot;
- puts ARGV
+ puts options
 </pre>
 <h3>An example that shows how to use &#8216;set_opt&#8217;, set the banner string, and add a summary.</h3>
 <pre>
@@ -223,7 +210,7 @@ It prints out an automatic usage statement:
    &quot;max&quot; =&gt; 10
  }
 
- options,arguments = OptSimple.new(defaults).parse_opts! do
+ options = OptSimple.new(defaults).parse_opts! do
    banner &quot;USAGE: #{$0}&quot;
    summary &quot;Show how to set a banner and summary.&quot;
 
@@ -234,13 +221,7 @@ It prints out an automatic usage statement:
  end
 
  puts &quot;Options&quot;
- puts options.inspect
-
- puts &quot;Arguments&quot;
- puts arguments.inspect
-
- puts &quot;ARGV&quot;
- puts ARGV
+ puts options
 </pre>
 <h3>An example that shows how to use &#8216;accumulate_opt&#8217; on an option to create a list, and on a flag to increment a counter</h3>
 <pre>
@@ -248,7 +229,7 @@ It prints out an automatic usage statement:
 
  verbosity = 0
 
- options,arguments = OptSimple.new.parse_opts! do
+ options = OptSimple.new.parse_opts! do
    option %w[-i --infile], &quot;Infile, multiple allowed&quot;, &quot;FILE&quot; do | arg |
      accumulate_opt arg
    end
@@ -263,16 +244,7 @@ It prints out an automatic usage statement:
  end
 
  puts &quot;Options&quot;
- puts options.inspect
-
- puts &quot;Arguments&quot;
- puts arguments.inspect
-
- puts &quot;Verbosity&quot;
- puts verbosity
-
- puts &quot;ARGV&quot;
- puts ARGV
+ puts options
 </pre>
 <h3>An example that shows that you can easily set your defaults in normal Ruby variables and provide your own help.</h3>
 <pre>
@@ -360,16 +332,10 @@ It prints out an automatic usage statement:
    end
  end
 
- options,arguments = os.parse_opts!
+ options = os.parse_opts!
 
  puts &quot;Options&quot;
- puts options.inspect
-
- puts &quot;Arguments&quot;
- puts arguments.inspect
-
- puts &quot;ARGV&quot;
- puts ARGV
+ puts options
 </pre>
 <h2>Questions and/or Comments</h2>
 <p>

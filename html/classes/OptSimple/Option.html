@@ -152,14 +152,14 @@ array.
             onclick="toggleCode('M000024-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000024-source">
 <pre>
-<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 389</span>
+<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 401</span>
     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">switches</span>,<span class="ruby-identifier">help</span>=<span class="ruby-value str">&quot;&quot;</span>,<span class="ruby-identifier">metavar</span>=<span class="ruby-value str">&quot;ARG&quot;</span>,<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
       <span class="ruby-keyword kw">super</span>(<span class="ruby-identifier">switches</span>,<span class="ruby-identifier">help</span>,<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
       <span class="ruby-ivar">@metavar</span> = <span class="ruby-identifier">metavar</span>
       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_given?</span>
-        <span class="ruby-identifier">names</span>.<span class="ruby-identifier">each</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">n</span><span class="ruby-operator">|</span> <span class="ruby-ivar">@param_options</span>[<span class="ruby-identifier">n</span>] = []}
+        <span class="ruby-ivar">@param_options</span>[<span class="ruby-identifier">names</span>.<span class="ruby-identifier">first</span>] = []
       <span class="ruby-keyword kw">else</span>
-        <span class="ruby-ivar">@block</span> = <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">arg</span><span class="ruby-operator">|</span> <span class="ruby-identifier">names</span>.<span class="ruby-identifier">each</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">n</span><span class="ruby-operator">|</span> <span class="ruby-ivar">@param_options</span>[<span class="ruby-identifier">n</span>] = <span class="ruby-identifier">arg</span>}}
+        <span class="ruby-ivar">@block</span> = <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">arg</span><span class="ruby-operator">|</span> <span class="ruby-ivar">@param_options</span>[<span class="ruby-identifier">names</span>.<span class="ruby-identifier">first</span>] = <span class="ruby-identifier">arg</span>}
       <span class="ruby-keyword kw">end</span>
     <span class="ruby-keyword kw">end</span>
 </pre>
@@ -195,9 +195,9 @@ append val to the parameter list
             onclick="toggleCode('M000025-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000025-source">
 <pre>
-<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 409</span>
+<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 421</span>
     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">accumulate_opt</span>(<span class="ruby-identifier">val</span>)
-      <span class="ruby-identifier">names</span>.<span class="ruby-identifier">each</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">n</span><span class="ruby-operator">|</span> <span class="ruby-ivar">@param_options</span>[<span class="ruby-identifier">n</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">val</span>}
+      <span class="ruby-ivar">@param_options</span>[<span class="ruby-identifier">names</span>.<span class="ruby-identifier">first</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">val</span>
     <span class="ruby-keyword kw">end</span>
 </pre>
           </div>

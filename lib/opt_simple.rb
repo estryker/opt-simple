@@ -115,17 +115,20 @@ class OptSimple
       # now actually parse the args, and call all the stored up blocks from the options
       @parameters.each do | parm |
 	intersection = @args & parm.switches
+	
+	# load the defaults for this particular parm no matter what is on the CL
+	default_switches = @defaults.keys & parm.names
+	if default_switches.length > 1
+	  raise OptSimple::Error "Clashes in the defaults for #{parm.switches}"
+	elsif default_switches.length == 1
+	  # set the default value before we see what is on the CL
+	  parm.param_options[default_switches.first] = @defaults[default_switches.first]
+	  @results.merge! parm.param_options
+	end
+
 	unless intersection.empty?
 	  mandatory_check.delete(parm.switches)
-	  parm.param_options.add_alias(parm.names)
 	  
-	  default_switches = @defaults.keys & parm.names
-	  if default_switches.length > 1
-	    raise OptSimple::Error "Clashes in the defaults for #{parm.switches}"
-	  elsif default_switches.length == 1
-	    # set the default value before we see what is on the CL
-	    parm.param_options[default_switches.first] = @defaults[default_switches.first]
-	  end
 
 	  arg_locations =  []
 	  @args.each_with_index {|arg,i| arg_locations << i if intersection.include?(arg) }
@@ -152,7 +155,6 @@ class OptSimple
 	      raise OptSimple::Error.new e.message,self
 	    end
 	  end
-	  
 	  @results.merge! parm.param_options
 	end
       end

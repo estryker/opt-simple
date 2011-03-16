@@ -174,6 +174,7 @@ Class <a href="OptSimple/MissingArgument.html" class="link">OptSimple::MissingAr
 Class <a href="OptSimple/Option.html" class="link">OptSimple::Option</a><br />
 Class <a href="OptSimple/Parameter.html" class="link">OptSimple::Parameter</a><br />
 Class <a href="OptSimple/ParameterUsageError.html" class="link">OptSimple::ParameterUsageError</a><br />
+Class <a href="OptSimple/Result.html" class="link">OptSimple::Result</a><br />
 
     </div>
 
@@ -251,9 +252,10 @@ defaults to ARGV
     <span class="ruby-ivar">@optional_opts</span> = []
     <span class="ruby-ivar">@parameters</span> = []
     <span class="ruby-ivar">@param_names</span> = {}
+    <span class="ruby-ivar">@results</span> = <span class="ruby-constant">OptSimple</span><span class="ruby-operator">::</span><span class="ruby-constant">Result</span>.<span class="ruby-identifier">new</span>
     <span class="ruby-ivar">@longest_switch_len</span> = <span class="ruby-value">0</span> 
-    <span class="ruby-ivar">@options</span> = <span class="ruby-identifier">defaults</span>.<span class="ruby-identifier">dup</span> <span class="ruby-comment cmt"># not sure if I have to dup this</span>
-    <span class="ruby-ivar">@positional_arguments</span> = []
+    <span class="ruby-ivar">@defaults</span> = <span class="ruby-identifier">defaults</span>
+    <span class="ruby-ivar">@positional_args</span> = []
     <span class="ruby-ivar">@args</span> = <span class="ruby-identifier">args</span>
     <span class="ruby-ivar">@banner</span> = <span class="ruby-node">&quot;Usage: #{File.basename($0)} [options]&quot;</span>
     <span class="ruby-ivar">@summary</span> = <span class="ruby-value str">&quot;&quot;</span>
@@ -295,7 +297,7 @@ href="OptSimple/Argument.html">Argument</a>,
             onclick="toggleCode('M000014-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000014-source">
 <pre>
-<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 272</span>
+<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 282</span>
   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_parameter</span>(<span class="ruby-identifier">parm</span>)
     
     <span class="ruby-ivar">@longest_switch_len</span> = <span class="ruby-identifier">parm</span>.<span class="ruby-identifier">switch_len</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">parm</span>.<span class="ruby-identifier">switch_len</span> <span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@longest_switch_len</span>
@@ -350,7 +352,7 @@ array.
             onclick="toggleCode('M000011-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000011-source">
 <pre>
-<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 231</span>
+<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 242</span>
   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">argument</span>(<span class="ruby-identifier">switches</span>,<span class="ruby-identifier">help</span>=<span class="ruby-value str">&quot;&quot;</span>,<span class="ruby-identifier">metavar</span>=<span class="ruby-value str">&quot;ARG&quot;</span>,<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
     <span class="ruby-identifier">add_parameter</span>(<span class="ruby-constant">Argument</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">switches</span>,<span class="ruby-identifier">help</span>,<span class="ruby-identifier">metavar</span>,<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>))
   <span class="ruby-keyword kw">end</span>
@@ -385,7 +387,7 @@ set the banner to str, overriding the default: &#8220;Usage:
             onclick="toggleCode('M000004-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000004-source">
 <pre>
-<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 56</span>
+<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 57</span>
   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">banner</span>(<span class="ruby-identifier">str</span>)
     <span class="ruby-ivar">@banner</span> = <span class="ruby-identifier">str</span>
   <span class="ruby-keyword kw">end</span>
@@ -421,24 +423,24 @@ href="OptSimple.html#M000007">parse_opts</a>
             onclick="toggleCode('M000008-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000008-source">
 <pre>
-<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 176</span>
+<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 187</span>
   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">default_arg_parser</span> 
     <span class="ruby-identifier">flag</span> = <span class="ruby-keyword kw">nil</span>
     <span class="ruby-ivar">@args</span>.<span class="ruby-identifier">each_with_index</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">arg</span>,<span class="ruby-identifier">loc</span><span class="ruby-operator">|</span>
       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">arg</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'--'</span>
         <span class="ruby-comment cmt"># end of flag marker</span>
-        <span class="ruby-ivar">@positional_args</span> <span class="ruby-operator">+=</span> <span class="ruby-ivar">@args</span>[<span class="ruby-identifier">i</span><span class="ruby-operator">+</span><span class="ruby-value">1</span> <span class="ruby-operator">..</span> <span class="ruby-value">-1</span>]
+        <span class="ruby-ivar">@results</span>.<span class="ruby-identifier">positional_args</span> <span class="ruby-operator">+=</span> <span class="ruby-ivar">@args</span>[<span class="ruby-identifier">i</span><span class="ruby-operator">+</span><span class="ruby-value">1</span> <span class="ruby-operator">..</span> <span class="ruby-value">-1</span>]
         <span class="ruby-keyword kw">break</span>
       <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">arg</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/^-+(.*)/</span>
         <span class="ruby-comment cmt"># assume flags are boolean</span>
-        <span class="ruby-ivar">@options</span>[<span class="ruby-identifier">$1</span>] = <span class="ruby-keyword kw">true</span>
+        <span class="ruby-ivar">@results</span>[<span class="ruby-identifier">$1</span>] = <span class="ruby-keyword kw">true</span>
         <span class="ruby-identifier">flag</span> = <span class="ruby-identifier">$1</span>
       <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">flag</span>
         <span class="ruby-comment cmt"># unless followed by an arg</span>
-        <span class="ruby-ivar">@options</span>[<span class="ruby-identifier">flag</span>] = <span class="ruby-identifier">arg</span>
+        <span class="ruby-ivar">@results</span>[<span class="ruby-identifier">flag</span>] = <span class="ruby-identifier">arg</span>
         <span class="ruby-identifier">flag</span> = <span class="ruby-keyword kw">nil</span>
       <span class="ruby-keyword kw">else</span>
-        <span class="ruby-ivar">@positional_args</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">arg</span>
+        <span class="ruby-ivar">@results</span>.<span class="ruby-identifier">positional_args</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">arg</span>
       <span class="ruby-keyword kw">end</span>
     <span class="ruby-keyword kw">end</span>
     <span class="ruby-ivar">@args</span>.<span class="ruby-identifier">slice!</span>(<span class="ruby-value">0</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>)
@@ -474,7 +476,7 @@ href="OptSimple/Error.html">OptSimple::Error</a> exception
             onclick="toggleCode('M000012-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000012-source">
 <pre>
-<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 236</span>
+<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 247</span>
   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">error</span>(<span class="ruby-identifier">string</span>=<span class="ruby-keyword kw">nil</span>)
     <span class="ruby-identifier">raise</span> <span class="ruby-constant">OptSimple</span><span class="ruby-operator">::</span><span class="ruby-constant">Error</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">string</span>
   <span class="ruby-keyword kw">end</span>
@@ -515,7 +517,7 @@ options hash and the values set to true when seen in the args array
             onclick="toggleCode('M000009-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000009-source">
 <pre>
-<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 207</span>
+<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 218</span>
   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">flag</span>(<span class="ruby-identifier">switches</span>,<span class="ruby-identifier">help</span>=<span class="ruby-value str">&quot;&quot;</span>,<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
     <span class="ruby-identifier">add_parameter</span>(<span class="ruby-constant">Flag</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">switches</span>,<span class="ruby-identifier">help</span>,<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>))
   <span class="ruby-keyword kw">end</span>
@@ -549,7 +551,7 @@ provide a user defined help string, and override the auto-generated one
             onclick="toggleCode('M000003-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000003-source">
 <pre>
-<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 51</span>
+<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 52</span>
   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">help</span>(<span class="ruby-identifier">str</span>)
     <span class="ruby-ivar">@help</span> = <span class="ruby-identifier">str</span>
   <span class="ruby-keyword kw">end</span>
@@ -591,7 +593,7 @@ array.
             onclick="toggleCode('M000010-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000010-source">
 <pre>
-<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 219</span>
+<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 230</span>
   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">option</span>(<span class="ruby-identifier">switches</span>,<span class="ruby-identifier">help</span>=<span class="ruby-value str">&quot;&quot;</span>,<span class="ruby-identifier">metavar</span>=<span class="ruby-value str">&quot;ARG&quot;</span>,<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
     <span class="ruby-identifier">add_parameter</span>(<span class="ruby-constant">Option</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">switches</span>,<span class="ruby-identifier">help</span>,<span class="ruby-identifier">metavar</span>,<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>))
   <span class="ruby-keyword kw">end</span>
@@ -627,7 +629,7 @@ run.
             onclick="toggleCode('M000007-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000007-source">
 <pre>
-<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 167</span>
+<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 178</span>
   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">parse_opts</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
     <span class="ruby-ivar">@original_args</span> = <span class="ruby-ivar">@args</span> <span class="ruby-comment cmt"># do I really need these around?</span>
     <span class="ruby-ivar">@args</span> = <span class="ruby-ivar">@args</span>.<span class="ruby-identifier">dup</span>
@@ -665,12 +667,20 @@ will be run.
             onclick="toggleCode('M000006-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000006-source">
 <pre>
-<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 81</span>
+<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 72</span>
   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">parse_opts!</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
     
     <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_given?</span>
       <span class="ruby-identifier">register_opts</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
     <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-comment cmt"># add the help option at the end, but only use -h if it hasn't been used</span>
+    <span class="ruby-comment cmt"># already (cuz we're that nice).</span>
+    <span class="ruby-identifier">help_strings</span> = <span class="ruby-node">%w[-h --help]</span>
+    <span class="ruby-keyword kw">if</span>(<span class="ruby-ivar">@parameters</span>.<span class="ruby-identifier">find</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">p</span><span class="ruby-operator">|</span> <span class="ruby-identifier">p</span>.<span class="ruby-identifier">switches</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-value str">'-h'</span>)})
+      <span class="ruby-identifier">help_strings</span> = <span class="ruby-node">%w[--help]</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">flag</span> <span class="ruby-identifier">help_strings</span> ,<span class="ruby-value str">&quot;(for this help message)&quot;</span>
   
     <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@parameters</span>.<span class="ruby-identifier">empty?</span>
       <span class="ruby-comment cmt">#parse the @args array by looking for switches/args by regex</span>
@@ -680,7 +690,7 @@ will be run.
       <span class="ruby-comment cmt"># the specified parms from @arg</span>
 
       <span class="ruby-comment cmt"># first look for a call for help</span>
-      <span class="ruby-keyword kw">unless</span> (<span class="ruby-node">%w[-h --help]</span> <span class="ruby-operator">&amp;</span> <span class="ruby-ivar">@args</span>).<span class="ruby-identifier">empty?</span>
+      <span class="ruby-keyword kw">unless</span> (<span class="ruby-identifier">help_strings</span> <span class="ruby-operator">&amp;</span> <span class="ruby-ivar">@args</span>).<span class="ruby-identifier">empty?</span>
         <span class="ruby-identifier">$stdout</span>.<span class="ruby-identifier">puts</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">to_s</span>
         <span class="ruby-identifier">exit</span>(<span class="ruby-value">0</span>)
       <span class="ruby-keyword kw">end</span>
@@ -689,7 +699,7 @@ will be run.
       
       <span class="ruby-keyword kw">if</span>(<span class="ruby-identifier">loc</span> = <span class="ruby-ivar">@args</span>.<span class="ruby-identifier">index</span>(<span class="ruby-value str">'--'</span>))
         <span class="ruby-comment cmt">#remove the '--', but don't include it w/ positional arguments</span>
-        <span class="ruby-ivar">@positional_arguments</span> <span class="ruby-operator">+=</span> <span class="ruby-ivar">@args</span>.<span class="ruby-identifier">slice!</span>(<span class="ruby-identifier">loc</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>)[<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>] 
+        <span class="ruby-ivar">@positional_args</span> <span class="ruby-operator">+=</span> <span class="ruby-ivar">@args</span>.<span class="ruby-identifier">slice!</span>(<span class="ruby-identifier">loc</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>)[<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>] 
       <span class="ruby-keyword kw">end</span>
       
       <span class="ruby-comment cmt"># Handle the case where a user specifies --foo=bar, or --foo=bar,baz</span>
@@ -704,9 +714,21 @@ will be run.
       <span class="ruby-comment cmt"># now actually parse the args, and call all the stored up blocks from the options</span>
       <span class="ruby-ivar">@parameters</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">parm</span> <span class="ruby-operator">|</span>
         <span class="ruby-identifier">intersection</span> = <span class="ruby-ivar">@args</span> <span class="ruby-operator">&amp;</span> <span class="ruby-identifier">parm</span>.<span class="ruby-identifier">switches</span>
+        
+        <span class="ruby-comment cmt"># load the defaults for this particular parm no matter what is on the CL</span>
+        <span class="ruby-identifier">default_switches</span> = <span class="ruby-ivar">@defaults</span>.<span class="ruby-identifier">keys</span> <span class="ruby-operator">&amp;</span> <span class="ruby-identifier">parm</span>.<span class="ruby-identifier">names</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">default_switches</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>
+          <span class="ruby-identifier">raise</span> <span class="ruby-constant">OptSimple</span><span class="ruby-operator">::</span><span class="ruby-constant">Error</span> <span class="ruby-node">&quot;Clashes in the defaults for #{parm.switches}&quot;</span>
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">default_switches</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span>
+          <span class="ruby-comment cmt"># set the default value before we see what is on the CL</span>
+          <span class="ruby-identifier">parm</span>.<span class="ruby-identifier">param_options</span>[<span class="ruby-identifier">default_switches</span>.<span class="ruby-identifier">first</span>] = <span class="ruby-ivar">@defaults</span>[<span class="ruby-identifier">default_switches</span>.<span class="ruby-identifier">first</span>]
+          <span class="ruby-ivar">@results</span>.<span class="ruby-identifier">merge!</span> <span class="ruby-identifier">parm</span>.<span class="ruby-identifier">param_options</span>
+        <span class="ruby-keyword kw">end</span>
+
         <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">intersection</span>.<span class="ruby-identifier">empty?</span>
           <span class="ruby-identifier">mandatory_check</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">parm</span>.<span class="ruby-identifier">switches</span>)
           
+
           <span class="ruby-identifier">arg_locations</span> =  []
           <span class="ruby-ivar">@args</span>.<span class="ruby-identifier">each_with_index</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">arg</span>,<span class="ruby-identifier">i</span><span class="ruby-operator">|</span> <span class="ruby-identifier">arg_locations</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">i</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">intersection</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">arg</span>) }
           
@@ -732,8 +754,7 @@ will be run.
               <span class="ruby-identifier">raise</span> <span class="ruby-constant">OptSimple</span><span class="ruby-operator">::</span><span class="ruby-constant">Error</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">message</span>,<span class="ruby-keyword kw">self</span>
             <span class="ruby-keyword kw">end</span>
           <span class="ruby-keyword kw">end</span>
-          
-          <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">merge!</span>(<span class="ruby-identifier">parm</span>.<span class="ruby-identifier">param_options</span>)
+          <span class="ruby-ivar">@results</span>.<span class="ruby-identifier">merge!</span> <span class="ruby-identifier">parm</span>.<span class="ruby-identifier">param_options</span>
         <span class="ruby-keyword kw">end</span>
       <span class="ruby-keyword kw">end</span>
       
@@ -744,10 +765,11 @@ will be run.
       <span class="ruby-identifier">extra_switches</span> = <span class="ruby-ivar">@args</span>.<span class="ruby-identifier">find_all</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">a</span><span class="ruby-operator">|</span> <span class="ruby-identifier">a</span>.<span class="ruby-identifier">start_with?</span>(<span class="ruby-value str">'-'</span>) }
       <span class="ruby-identifier">raise</span> <span class="ruby-constant">OptSimple</span><span class="ruby-operator">::</span><span class="ruby-constant">InvalidOption</span>.<span class="ruby-identifier">new</span> <span class="ruby-node">&quot;Unknown options: #{extra_switches.join(' ')}&quot;</span>,<span class="ruby-keyword kw">self</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">extra_switches</span>.<span class="ruby-identifier">empty?</span>
       
-      <span class="ruby-ivar">@positional_arguments</span> <span class="ruby-operator">+=</span> <span class="ruby-ivar">@args</span>.<span class="ruby-identifier">slice!</span>(<span class="ruby-value">0</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>)
+      <span class="ruby-ivar">@positional_args</span> <span class="ruby-operator">+=</span> <span class="ruby-ivar">@args</span>.<span class="ruby-identifier">slice!</span>(<span class="ruby-value">0</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>)
     <span class="ruby-keyword kw">end</span>
-    
-    <span class="ruby-keyword kw">return</span> [<span class="ruby-ivar">@options</span>,<span class="ruby-ivar">@positional_arguments</span>]
+
+    <span class="ruby-ivar">@results</span>.<span class="ruby-identifier">positional_args</span> = <span class="ruby-ivar">@positional_args</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-ivar">@results</span>
   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
@@ -780,22 +802,12 @@ registering parms in multiple places in your code.
             onclick="toggleCode('M000005-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000005-source">
 <pre>
-<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 62</span>
+<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 63</span>
   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">register_opts</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
-    <span class="ruby-keyword kw">begin</span>
-      <span class="ruby-comment cmt"># call the block to register all the parameters and</span>
-      <span class="ruby-comment cmt"># their corresponding code blocks</span>
-      <span class="ruby-comment cmt"># We use instance_exec so that the API is cleaner. </span>
-      <span class="ruby-identifier">instance_exec</span>(<span class="ruby-ivar">@options</span>,<span class="ruby-ivar">@positional_arguments</span>,<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>) 
-    <span class="ruby-keyword kw">ensure</span>
-      <span class="ruby-comment cmt"># we are ensuring that the options that occur before any break statement</span>
-      <span class="ruby-comment cmt"># actually get parsed. </span>
-      
-      <span class="ruby-comment cmt"># add the help option at the end the first time register_opts is called</span>
-      <span class="ruby-keyword kw">unless</span>(<span class="ruby-ivar">@parameters</span>.<span class="ruby-identifier">find</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">p</span><span class="ruby-operator">|</span> <span class="ruby-identifier">p</span>.<span class="ruby-identifier">switches</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-value str">'-h'</span>)})
-        <span class="ruby-identifier">flag</span> <span class="ruby-node">%w[-h --help]</span> ,<span class="ruby-value str">&quot;(for this help message)&quot;</span>
-      <span class="ruby-keyword kw">end</span>
-    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-comment cmt"># call the block to register all the parameters and</span>
+    <span class="ruby-comment cmt"># their corresponding code blocks</span>
+    <span class="ruby-comment cmt"># We use instance_exec so that the API is cleaner. </span>
+    <span class="ruby-identifier">instance_exec</span>(<span class="ruby-ivar">@results</span>,<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>) 
   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
@@ -827,7 +839,7 @@ set the Summary string at the end of the usage statement
             onclick="toggleCode('M000002-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000002-source">
 <pre>
-<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 46</span>
+<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 47</span>
   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">summary</span>(<span class="ruby-identifier">str</span>)
     <span class="ruby-ivar">@summary</span> = <span class="ruby-identifier">str</span>
   <span class="ruby-keyword kw">end</span>
@@ -861,27 +873,26 @@ returns the automatic usage statement
             onclick="toggleCode('M000013-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000013-source">
 <pre>
-<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 241</span>
+<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 252</span>
   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_s</span>
     <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@help</span>.<span class="ruby-identifier">empty?</span>
       <span class="ruby-identifier">help_str</span> = <span class="ruby-value str">&quot;&quot;</span>
       
       <span class="ruby-identifier">help_str</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;  MANDATORY ARGS:\n&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">mandatory_opts</span>.<span class="ruby-identifier">empty?</span>
       <span class="ruby-identifier">mandatory_opts</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">parm</span> <span class="ruby-operator">|</span>
-        <span class="ruby-identifier">help_str</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">parm</span>.<span class="ruby-identifier">help_str</span>(<span class="ruby-ivar">@longest_switch_len</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;\n&quot;</span>
+        <span class="ruby-identifier">help_str</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">parm</span>.<span class="ruby-identifier">help_str</span>(<span class="ruby-ivar">@longest_switch_len</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;\n\n&quot;</span>
       <span class="ruby-keyword kw">end</span> 
-      <span class="ruby-identifier">help_str</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;\n&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">mandatory_opts</span>.<span class="ruby-identifier">empty?</span>
       
       <span class="ruby-identifier">help_str</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;  OPTIONS:\n&quot;</span> <span class="ruby-keyword kw">unless</span>  <span class="ruby-identifier">optional_opts</span>.<span class="ruby-identifier">empty?</span>
       <span class="ruby-identifier">optional_opts</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">parm</span> <span class="ruby-operator">|</span>
         <span class="ruby-identifier">help_str</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">parm</span>.<span class="ruby-identifier">help_str</span>(<span class="ruby-ivar">@longest_switch_len</span>)
         
         <span class="ruby-comment cmt"># check to see if we have any defaults set to help in the help doc</span>
-        <span class="ruby-identifier">intersection</span> = <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">keys</span> <span class="ruby-operator">&amp;</span> <span class="ruby-identifier">parm</span>.<span class="ruby-identifier">names</span>
+        <span class="ruby-identifier">intersection</span> = <span class="ruby-ivar">@defaults</span>.<span class="ruby-identifier">keys</span> <span class="ruby-operator">&amp;</span> <span class="ruby-identifier">parm</span>.<span class="ruby-identifier">names</span>
         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">intersection</span>.<span class="ruby-identifier">empty?</span>
           <span class="ruby-identifier">help_str</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;\n\n&quot;</span>
         <span class="ruby-keyword kw">else</span>
-          <span class="ruby-identifier">help_str</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot; (default is #{@options[intersection.first]})\n\n&quot;</span>
+          <span class="ruby-identifier">help_str</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot; (default is #{@defaults[intersection.first]})\n\n&quot;</span>
         <span class="ruby-keyword kw">end</span>
       <span class="ruby-keyword kw">end</span>
       <span class="ruby-identifier">help_str</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;  SUMMARY:\n\n    #{@summary}\n\n&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@summary</span>.<span class="ruby-identifier">empty?</span>
