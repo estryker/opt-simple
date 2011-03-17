@@ -30,3 +30,8 @@ end
 
 puts "Options"
 puts options
+puts options[:p]
+puts options['glob-pattern']
+if options.include?('p')
+  puts options.pattern
+end

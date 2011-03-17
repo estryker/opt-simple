@@ -22,10 +22,14 @@ class ArglistTest < Test::Unit::TestCase
     assert_equal options.positional_args.sort,%w[infile1 infile2 infile3 -infile4 infile5].sort
   end
 
-  must "empty out ARGV when using parse_opts!" do
-    arg_copy = @args.dup
+  must "only keep positional args in ARGV when using parse_opts!" do
     @os.parse_opts! &@block 
-    assert @args.empty?
+    assert_equal @args,%w[infile1 infile2 infile3 -infile4 infile5]
+  end
+
+  must "have ARGV and opts.positional_args identical when calling parse_opts!" do 
+    opts = @os.parse_opts! &@block 
+    assert_equal @args,opts.positional_args
   end
 
   must "preserve ARGV when using parse_opts" do

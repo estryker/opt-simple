@@ -36,8 +36,7 @@ class OptSimple
     @results = OptSimple::Result.new
     @longest_switch_len = 0 
     @defaults = defaults
-    @positional_args = []
-    @args = args
+    @args = args.to_a # especially for jruby
     @banner = "Usage: #{File.basename($0)} [options]"
     @summary = ""
     @help = ""
@@ -98,9 +97,10 @@ class OptSimple
       
       mandatory_check = mandatory_opts.map {|m| m.switches}
       
+      positional_args = []
       if(loc = @args.index('--'))
 	#remove the '--', but don't include it w/ positional arguments
-	@positional_args += @args.slice!(loc..-1)[1..-1] 
+	positional_args = @args.slice!(loc..-1)[1..-1]
       end
       
       # Handle the case where a user specifies --foo=bar, or --foo=bar,baz
@@ -165,11 +165,13 @@ class OptSimple
       
       extra_switches = @args.find_all {|a| a.start_with?('-') }
       raise OptSimple::InvalidOption.new "Unknown options: #{extra_switches.join(' ')}",self unless extra_switches.empty?
-      
-      @positional_args += @args.slice!(0..-1)
+
+
+      # put back the positional args that were taken off after the '--'
+      @results.positional_args.concat(@args.dup + positional_args)
+      @args.concat(positional_args)
     end
 
-    @results.positional_args = @positional_args
     return @results
   end
 
@@ -203,7 +205,7 @@ class OptSimple
 	@results.positional_args << arg
       end
     end
-    @args.slice!(0..-1)
+    @args.delete_if {|a| not @results.positional_args.include?(a)}
   end
 
   # Registers an optional parameter, usually with nothing following it. 
@@ -511,6 +513,11 @@ class OptSimple
 	add_alias(a)
 	self[a.first] =  other[a.first]
       end
+    end
+
+    # check to see if the 'key' option was set
+    def include?(key)
+      @inside_hash.include?(@name_to_aliases[key])
     end
 
     # a list of all the aliases
