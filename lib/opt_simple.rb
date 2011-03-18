@@ -74,18 +74,18 @@ class OptSimple
       register_opts(&block)
     end
 
-    # add the help option at the end, but only use -h if it hasn't been used
-    # already (cuz we're that nice).
-    help_strings = %w[-h --help]
-    if(@parameters.find {|p| p.switches.include?('-h')})
-      help_strings = %w[--help]
-    end
-    flag help_strings ,"(for this help message)"
-  
     if @parameters.empty?
       #parse the @args array by looking for switches/args by regex
       default_arg_parser
     else
+      # add the help option at the end, but only use -h if it hasn't been used
+      # already (cuz we're that nice).
+      help_strings = %w[-h --help]
+      if(@parameters.find {|p| p.switches.include?('-h')})
+	help_strings = %w[--help]
+      end
+      flag help_strings ,"(for this help message)"
+
       # go through the  registered parameters, and pull out 
       # the specified parms from @arg
 
@@ -129,7 +129,6 @@ class OptSimple
 	unless intersection.empty?
 	  mandatory_check.delete(parm.switches)
 	  
-
 	  arg_locations =  []
 	  @args.each_with_index {|arg,i| arg_locations << i if intersection.include?(arg) }
 	  
@@ -166,9 +165,8 @@ class OptSimple
       extra_switches = @args.find_all {|a| a.start_with?('-') }
       raise OptSimple::InvalidOption.new "Unknown options: #{extra_switches.join(' ')}",self unless extra_switches.empty?
 
-
+      @results.positional_args = @args + positional_args
       # put back the positional args that were taken off after the '--'
-      @results.positional_args.concat(@args.dup + positional_args)
       @args.concat(positional_args)
     end
 
@@ -191,7 +189,7 @@ class OptSimple
     @args.each_with_index do |arg,loc|
       if arg == '--'
 	# end of flag marker
-	@results.positional_args += @args[i+1 .. -1]
+	@results.positional_args += @args[loc+1 .. -1]
 	break
       elsif arg =~ /^-+(.*)/
 	# assume flags are boolean

@@ -22,13 +22,18 @@ class ArglistTest < Test::Unit::TestCase
     assert_equal options.positional_args.sort,%w[infile1 infile2 infile3 -infile4 infile5].sort
   end
 
-  must "only keep positional args in ARGV when using parse_opts!" do
+  must "keep positional args in ARGV when using parse_opts!" do
     @os.parse_opts! &@block 
     assert_equal @args,%w[infile1 infile2 infile3 -infile4 infile5]
   end
 
-  must "have ARGV and opts.positional_args identical when calling parse_opts!" do 
-    opts = @os.parse_opts! &@block 
+  must "keep positional args in ARGV when using parse_opts! and no block given" do
+    @os.parse_opts!
+    assert_equal @args,%w[infile1 infile3 -infile4 infile5]
+  end
+  
+  must "have ARGV and opts.positional_args identical when calling parse_opts and no block given" do 
+    opts = @os.parse_opts! 
     assert_equal @args,opts.positional_args
   end
 
@@ -36,7 +41,7 @@ class ArglistTest < Test::Unit::TestCase
     arg_copy = @args.dup
     @os.parse_opts &@block 
 
-    assert_equal @args.sort,arg_copy.sort
+    assert_equal @args,arg_copy
   end
 
 end
