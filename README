@@ -7,15 +7,14 @@ usage statement is constructed.
 
 There are three methods to define command line parameters:
 
- flag - a command line switch with no arguments following (although you can still use flag
- as a synonym for option. But default behavior is to expect no args.)
+ flag - a command line switch with no arguments following 
  
  option - an optional command line parameter with one or more arguments
  
  argument - a mandatory command line parameter with one or more arguments
 
 Inside the blocks in flag, option, and argument a shortcut function called 'set_opt'
-can be used to set an option that will be returned in the options hash. The 'accumulate_opt'
+can be used to set an option that will be returned in the Result. The 'accumulate_opt'
 method can be used in the option and argument blocks to create a list of values, and in 
 the flag block to increment a counter (with verbosity being the classic example). 
 

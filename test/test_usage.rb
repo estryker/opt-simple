@@ -105,5 +105,15 @@ class TestHelpStatement < Test::Unit::TestCase
     assert_equal o['i'],'foo.bar'
     assert_equal o['o'],'bar.out'
   end
+
+  must "set flags to false by default" do
+    os = OptSimple.new
+    o = os.parse_opts! do 
+      flag %w[-v]
+    end
+
+    assert_equal o.v, false
+  end
+
 end
 

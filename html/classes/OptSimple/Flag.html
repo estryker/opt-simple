@@ -89,14 +89,15 @@
 
     <div id="description">
       <p>
-An optional parameter, usually with nothing following it. although if the
-block has arity > 0, we&#8217;ll be happy to handle it as such.
+An optional parameter, usually with nothing following it. If not set on the
+CL, it will be false in the <a href="Result.html">Result</a>.
 &#8216;switches&#8217; can be a String or an Array of Strings, and
 specifies the switches expected on the CL. &#8216;help&#8217; provides a
 description of the parameter and an optional block can do parameter
 validation/transformation. If no block is given, then the strings specified
-(after the leading &#8217;-&#8217;s removed) will be used as keys in the
-options hash and the values set to true when seen in the args array
+(after the leading &#8217;-&#8217;s removed) will be used as keys in the <a
+href="Result.html">Result</a> and the values set to true when seen on the
+CL
 </p>
 
     </div>
@@ -151,11 +152,11 @@ options hash and the values set to true when seen in the args array
             onclick="toggleCode('M000022-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000022-source">
 <pre>
-<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 377</span>
+<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 376</span>
     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">switches</span>,<span class="ruby-identifier">help</span>=<span class="ruby-value str">&quot;&quot;</span>,<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
       <span class="ruby-keyword kw">super</span>(<span class="ruby-identifier">switches</span>,<span class="ruby-identifier">help</span>,<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_given?</span>
-        <span class="ruby-ivar">@param_options</span>[<span class="ruby-identifier">names</span>.<span class="ruby-identifier">first</span>] = <span class="ruby-value">0</span>
+        <span class="ruby-ivar">@param_options</span>[<span class="ruby-identifier">names</span>.<span class="ruby-identifier">first</span>] = <span class="ruby-keyword kw">false</span>
       <span class="ruby-keyword kw">else</span>
         <span class="ruby-ivar">@block</span> = <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-ivar">@param_options</span>[<span class="ruby-identifier">names</span>.<span class="ruby-identifier">first</span>] = <span class="ruby-keyword kw">true</span>}
       <span class="ruby-keyword kw">end</span>
@@ -193,9 +194,14 @@ increment the parameter by one every time it is seen on the CL
             onclick="toggleCode('M000023-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000023-source">
 <pre>
-<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 387</span>
+<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 386</span>
     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">accumulate_opt</span>
-      <span class="ruby-ivar">@param_options</span>[<span class="ruby-identifier">names</span>.<span class="ruby-identifier">first</span>] <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>
+      <span class="ruby-comment cmt"># if this is the first time seen, set it to 1. </span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@param_options</span>[<span class="ruby-identifier">names</span>.<span class="ruby-identifier">first</span>] <span class="ruby-operator">==</span> <span class="ruby-keyword kw">false</span>
+        <span class="ruby-ivar">@param_options</span>[<span class="ruby-identifier">names</span>.<span class="ruby-identifier">first</span>] = <span class="ruby-value">1</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-ivar">@param_options</span>[<span class="ruby-identifier">names</span>.<span class="ruby-identifier">first</span>] <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>
+      <span class="ruby-keyword kw">end</span>
     <span class="ruby-keyword kw">end</span>
 </pre>
           </div>

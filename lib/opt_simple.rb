@@ -4,15 +4,14 @@
 
 There are three methods to define command line parameters:
 
- flag - a command line switch with no arguments following (although you can still use flag
- as a synonym for option. But default behavior is to expect no args.)
+ flag - a command line switch with no arguments following. 
  
  option - an optional command line parameter with one or more arguments
  
  argument - a mandatory command line parameter with one or more arguments
 
 Inside the blocks in flag, option, and argument a shortcut function called 'set_opt'
-can be used to set an option that will be returned in the options hash. The 'accumulate_opt'
+can be used to set an option that will be returned in the Result. The 'accumulate_opt'
 method can be used in the option and argument blocks to create a list of values, and in 
 the flag block to increment a counter (with verbosity being the classic example). 
 
@@ -206,17 +205,20 @@ class OptSimple
     @args.delete_if {|a| not @results.positional_args.include?(a)}
   end
 
-  # Registers an optional parameter, usually with nothing following it. 
-  # although if the block has arity > 0, we'll be happy to handle 
-  # it as such. 
+  # Registers an optional parameter, usually with nothing following it.
+  # If  not set on the CL, it will be false in the Result. 
   # 'switches' can be a String or an Array of Strings, and specifies the switches expected on the CL.
   # 'help' provides a description of the parameter
   # and an optional block can do parameter validation/transformation.
   # If no block is given, then the strings specified (after the 
-  # leading '-'s removed) will be used as keys in the options hash 
-  # and the values set to true when  seen in the args array
+  # leading '-'s removed) will be used as keys in the Result 
+  # and the values set to true when  seen on the CL
   def flag(switches,help="",&block)
-    add_parameter(Flag.new(switches,help,&block))
+    parm = Flag.new(switches,help,&block)
+    add_parameter(parm)
+
+    # use the first name b/c they are all aliased anyways.
+    @defaults[parm.names.first] = false
   end
 
   # Registers an optional parameter, with one or more argument following it.
@@ -225,8 +227,8 @@ class OptSimple
   # usage statement.
   # and an optional block can do parameter validation/transformation.
   # If no block is given, then the strings specified (after the 
-  # leading '-'s removed) will be used as keys in the options hash 
-  # and the values set to the arg following the switch in the args array.
+  # leading '-'s removed) will be used as keys in the Result 
+  # and the values set to the arg following the switch on the CL.
   def option(switches,help="",metavar="ARG",&block)
     add_parameter(Option.new(switches,help,metavar,&block))
   end
@@ -237,7 +239,7 @@ class OptSimple
   # usage statement.
   # and an optional block can do parameter validation/transformation.
   # If no block is given, then the strings specified (after the 
-  # leading '-'s removed) will be used as keys in the options hash 
+  # leading '-'s removed) will be used as keys in the Result 
   # and the values set to the arg following the switch the args array.
   def argument(switches,help="",metavar="ARG",&block)
     add_parameter(Argument.new(switches,help,metavar,&block))
@@ -363,19 +365,18 @@ class OptSimple
   end
 
   # An optional parameter, usually with nothing following it. 
-  # although if the block has arity > 0, we'll be happy to handle 
-  # it as such. 
+  # If  not set on the CL, it will be false in the Result. 
   # 'switches' can be a String or an Array of Strings, and specifies the switches expected on the CL.
   # 'help' provides a description of the parameter
   # and an optional block can do parameter validation/transformation.
   # If no block is given, then the strings specified (after the 
-  # leading '-'s removed) will be used as keys in the options hash 
-  # and the values set to true when  seen in the args array  
+  # leading '-'s removed) will be used as keys in the Result 
+  # and the values set to true when seen on the CL  
   class Flag < Parameter
     def initialize(switches,help="",&block)
       super(switches,help,&block)
       if block_given?
-	@param_options[names.first] = 0
+	@param_options[names.first] = false
       else
 	@block = Proc.new { @param_options[names.first] = true}
       end
@@ -383,7 +384,12 @@ class OptSimple
     
     # increment the parameter by one every time it is seen on the CL
     def accumulate_opt
-      @param_options[names.first] += 1
+      # if this is the first time seen, set it to 1. 
+      if @param_options[names.first] == false
+	@param_options[names.first] = 1
+      else
+	@param_options[names.first] += 1
+      end
     end
 
   end
@@ -394,8 +400,8 @@ class OptSimple
   # usage statement.
   # and an optional block can do parameter validation/transformation.
   # If no block is given, then the strings specified (after the 
-  # leading '-'s removed) will be used as keys in the options hash 
-  # and the values set to the arg following the switch in the args array.
+  # leading '-'s removed) will be used as keys in the Result 
+  # and the values set to the arg following the switch on the CL.
   class Option < Parameter
     attr_reader = :metavar
     def initialize(switches,help="",metavar="ARG",&block)
@@ -430,7 +436,7 @@ class OptSimple
   # usage statement.
   # and an optional block can do parameter validation/transformation.
   # If no block is given, then the strings specified (after the 
-  # leading '-'s removed) will be used as keys in the options hash 
+  # leading '-'s removed) will be used as keys in the Result 
   # and the values set to the arg following the switch the args array.
   class Argument < Option
     def mandatory?; true; end
@@ -456,8 +462,8 @@ class OptSimple
   # on the command line
   class ParameterUsageError < Error;end
 
-  # The results after parsing the CL in a hash-like object with method
-  # syntax for getters/setters as well. Each result that belong to the same 
+  # The Results after parsing the CL in a hash-like object with method
+  # syntax for getters/setters as well. Each Result that belong to the same 
   # Parameter are aliased to keep consistent
   class Result
     attr_accessor :positional_args
@@ -498,14 +504,14 @@ class OptSimple
       hash.keys.each { |k| self[k] = hash[k] }
     end
     
-    # merge non-destructively, and return the result
+    # merge non-destructively, and return the Result
     def merge(other)
       r = Result.new
       r.merge! self
       r.merge! other
     end
 
-    # merge into this Result and return the result
+    # merge into this Result and return the Result
     def merge!(other)
       other.aliases.each do | a | 
 	add_alias(a)
