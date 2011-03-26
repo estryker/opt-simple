@@ -264,8 +264,11 @@ class OptSimple
       optional_opts.each do | parm |
 	help_str << parm.help_str(@longest_switch_len)
 	
-	# check to see if we have any defaults set to help in the help doc
-	intersection = @defaults.keys & parm.names
+	# check to see if we have any defaults for options and args only
+	# to add to the help doc
+	intersection = []
+
+	intersection = @defaults.keys & parm.names unless parm.class == Flag
 	if intersection.empty?
 	  help_str << "\n\n"
 	else
@@ -299,8 +302,8 @@ class OptSimple
   end
 
   # The base class for command line parameter objects from which Flag, 
-  # Option and Argument are derived. Provides documentation methods, 
-  # an 'error method', and the 'set_opt' utility funciton. 
+  # Option and Argument are derived. Users will probably only use the 
+  # an 'error method' and the 'set_opt' utility funciton. 
   class Parameter
     attr_reader :switches,:param_options,:metavar,:block
 
@@ -312,7 +315,6 @@ class OptSimple
       @help = help
       @block = block
       @param_options = OptSimple::Result.new
-      @names = nil
       @param_options.add_alias(self.names)
     end
 
@@ -323,7 +325,12 @@ class OptSimple
 
     # returns a list of the switches without the leading '-'s
     def names
-      @names ||= switches.map {|s| s.sub(/^-+/,'')}
+      names = []
+      switches.each do  |s| 
+	st = s.sub(/^-+/,'')
+	names << st << st.to_sym
+      end
+      names 
     end
 
     def switch_len #:nodoc:
@@ -359,7 +366,7 @@ class OptSimple
       @param_options[names.first] = val
     end
 
-    # is it mandatory to see this parameter on the command line?
+    # is it mandatory to see this parameter on the command line? Returns false unless overidden.  
     def mandatory?; false; end
 
   end
@@ -439,6 +446,7 @@ class OptSimple
   # leading '-'s removed) will be used as keys in the Result 
   # and the values set to the arg following the switch the args array.
   class Argument < Option
+    # returns true in an Argument
     def mandatory?; true; end
   end
 

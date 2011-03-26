@@ -53,7 +53,7 @@
     </tr>
     <tr class="top-aligned-row">
       <td><strong>Last Update:</strong></td>
-      <td>2011-03-25 23:20:09 +0000</td>
+      <td>2011-03-26 09:50:21 +0000</td>
     </tr>
     </table>
   </div>
@@ -64,7 +64,7 @@
   <div id="contextContent">
 
     <div id="description">
-      <h1><a href="../classes/OptSimple.html">OptSimple</a> provides a very simple interface to command line parsing.</h1>
+      <h2><a href="../classes/OptSimple.html">OptSimple</a> provides a very simple interface to command line parsing.</h2>
 <h2>Description</h2>
 <p>
 Parameter specification, validity checking and argument transformations can
@@ -114,45 +114,62 @@ href="../classes/OptSimple.html">OptSimple</a> using RubyGems:
  $ sudo gem install opt-simple
 </pre>
 <h2>Examples</h2>
-<h3>One example that shows a lot of the behavior you might use</h3>
-<p>
-require &#8216;opt_simple&#8216;
-</p>
+<h3>One example that shows most of the behavior you might use</h3>
 <pre>
- min = 5
- max = 15
+ require 'opt_simple'
 
- options = OptSimple.new.parse_opts! do
+ defaults = {
+   :n =&gt; 42,
+   :range =&gt; [5,10]
+ }
+
+ opts = OptSimple.new(defaults).parse_opts! do
    argument %w[-i --infile], &quot;Infile, multiple allowed&quot;, &quot;FILE&quot; do | arg |
      accumulate_opt arg
    end
 
-   option %w[-p --pattern --glob-pattern], &quot;glob pattern&quot;,&quot;PATTERN&quot;
+   flag %w[-d --debug],&quot;debug mode&quot;
 
-   option %w[-n -num --num-values],&quot;Number of val&quot;,&quot;VAL&quot; do |arg|
+   flag %w[-m --cowbell --morecowbell],&quot;I've got a fever, and this is the only prescription.&quot; do
+     accumulate_opt
+   end
+
+   option %w[-n -num --num-values],&quot;The answer to everything&quot;,&quot;VAL&quot; do |arg|
      set_opt arg.to_i
    end
 
-   option &quot;--range&quot;, &quot;range: min,max (both &gt;0) default is #{min},#{max}&quot; do | arg1,arg2 |
-     min = arg1.to_i
-     max = arg2.to_i
+   option %w[-p --pattern --glob-pattern], &quot;glob pattern&quot;,&quot;PATTERN&quot;
+
+   option &quot;--range&quot;, &quot;range: min,max (both &gt;0)&quot; do | arg1,arg2 |
+     min,max = [arg1.to_i,arg2.to_i]
+     set_opt [min,max]
 
      error &quot;max must be greater than min&quot; unless max &gt; min
      error &quot;both must be &gt;=0&quot; if min &lt; 0
    end
-
-   flag %w[-v  --verbose],&quot;Verbosity. the more you set, the more we give&quot; do
-     accumulate_opt
-   end
-
  end
 
  puts &quot;Options&quot;
- puts options
- # access the results using method names or hash syntax
- puts options.pattern
- puts options[:p]
- puts options['glob-pattern']
+ puts opts
+
+ # you can use method syntax to access the options
+ puts &quot;Infile list: #{opts.infile}&quot;
+
+ # Flags are set to false by default
+ puts &quot;Debug&quot; if opts.debug
+
+ # If accumulate_opt is used, flags still default to false, but
+ # will be integers if set on the CL
+ puts &quot;Cowbell: #{opts['cowbell']}&quot;
+
+ # You can use hash syntax to access the options as strings or symbols
+ puts &quot;N: #{opts[:n]}&quot;
+
+ # You can check to see if Options were set
+ puts &quot;Pattern: #{opts.p}&quot; if opts.include?(:p)
+
+ # Here, range was set to an Array.
+ puts &quot;Range: #{opts.range.first} #{opts.range.last}&quot;
 </pre>
 <p>
 Which prints out an automatic usage statement:
@@ -164,13 +181,15 @@ Which prints out an automatic usage statement:
      -i, --infile FILE                           Infile, multiple allowed
 
    OPTIONS:
+     -d, --debug                                 debug mode
+
+     -m, --cowbell, --morecowbell                I've got a fever, and this is the only prescription.
+
+     -n, -num, --num-values VAL                  The answer to everything
+
      -p, --pattern, --glob-pattern PATTERN       glob pattern
 
-     -n, -num, --num-values VAL                  Number of val
-
-         --range ARG                             range: min,max (both &gt;0) default is 5,15
-
-     -v, --verbose                               Verbosity. the more you set, the more we give
+         --range ARG                             range: min,max (both &gt;0) (default is [5, 10])
 
      -h, --help                                  (for this help message)
 </pre>

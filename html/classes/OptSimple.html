@@ -296,7 +296,7 @@ href="OptSimple/Argument.html">Argument</a>,
             onclick="toggleCode('M000014-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000014-source">
 <pre>
-<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 284</span>
+<span class="ruby-comment cmt"># File lib/opt_simple.rb, line 287</span>
   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_parameter</span>(<span class="ruby-identifier">parm</span>)
     
     <span class="ruby-ivar">@longest_switch_len</span> = <span class="ruby-identifier">parm</span>.<span class="ruby-identifier">switch_len</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">parm</span>.<span class="ruby-identifier">switch_len</span> <span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@longest_switch_len</span>
@@ -893,8 +893,11 @@ returns the automatic usage statement
       <span class="ruby-identifier">optional_opts</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">parm</span> <span class="ruby-operator">|</span>
         <span class="ruby-identifier">help_str</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">parm</span>.<span class="ruby-identifier">help_str</span>(<span class="ruby-ivar">@longest_switch_len</span>)
         
-        <span class="ruby-comment cmt"># check to see if we have any defaults set to help in the help doc</span>
-        <span class="ruby-identifier">intersection</span> = <span class="ruby-ivar">@defaults</span>.<span class="ruby-identifier">keys</span> <span class="ruby-operator">&amp;</span> <span class="ruby-identifier">parm</span>.<span class="ruby-identifier">names</span>
+        <span class="ruby-comment cmt"># check to see if we have any defaults for options and args only</span>
+        <span class="ruby-comment cmt"># to add to the help doc</span>
+        <span class="ruby-identifier">intersection</span> = []
+
+        <span class="ruby-identifier">intersection</span> = <span class="ruby-ivar">@defaults</span>.<span class="ruby-identifier">keys</span> <span class="ruby-operator">&amp;</span> <span class="ruby-identifier">parm</span>.<span class="ruby-identifier">names</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">parm</span>.<span class="ruby-identifier">class</span> <span class="ruby-operator">==</span> <span class="ruby-constant">Flag</span>
         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">intersection</span>.<span class="ruby-identifier">empty?</span>
           <span class="ruby-identifier">help_str</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;\n\n&quot;</span>
         <span class="ruby-keyword kw">else</span>

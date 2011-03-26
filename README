@@ -1,4 +1,4 @@
-= OptSimple provides a very simple interface to command line parsing. 
+== OptSimple provides a very simple interface to command line parsing. 
 
 == Description
 Parameter specification, validity checking and argument transformations
@@ -36,61 +36,80 @@ It is recommended to install OptSimple using RubyGems:
 
 == Examples
 
-=== One example that shows a lot of the behavior you might use
-require 'opt_simple'
-
- min = 5
- max = 15
+=== One example that shows most of the behavior you might use
+ require 'opt_simple'
  
- options = OptSimple.new.parse_opts! do 
+ defaults = {
+   :n => 42,
+   :range => [5,10]
+ }
+ 
+ opts = OptSimple.new(defaults).parse_opts! do 
    argument %w[-i --infile], "Infile, multiple allowed", "FILE" do | arg |
      accumulate_opt arg
    end
  
-   option %w[-p --pattern --glob-pattern], "glob pattern","PATTERN"
+   flag %w[-d --debug],"debug mode"
  
-   option %w[-n -num --num-values],"Number of val","VAL" do |arg|
+   flag %w[-m --cowbell --morecowbell],"I've got a fever, and this is the only prescription." do 
+     accumulate_opt
+   end
+   
+   option %w[-n -num --num-values],"The answer to everything","VAL" do |arg|
      set_opt arg.to_i
    end
  
-   option "--range", "range: min,max (both >0) default is #{min},#{max}" do | arg1,arg2 |
-     min = arg1.to_i
-     max = arg2.to_i    
+   option %w[-p --pattern --glob-pattern], "glob pattern","PATTERN"
+ 
+   option "--range", "range: min,max (both >0)" do | arg1,arg2 |
+     min,max = [arg1.to_i,arg2.to_i]
+     set_opt [min,max]
       
      error "max must be greater than min" unless max > min
      error "both must be >=0" if min < 0
    end
- 
-   flag %w[-v  --verbose],"Verbosity. the more you set, the more we give" do 
-     accumulate_opt
-   end
- 
  end
  
  puts "Options"
- puts options
- # access the results using method names or hash syntax 
- puts options.pattern
- puts options[:p]
- puts options['glob-pattern']
+ puts opts
+
+ # you can use method syntax to access the options
+ puts "Infile list: #{opts.infile}"
+
+ # Flags are set to false by default
+ puts "Debug" if opts.debug
+
+ # If accumulate_opt is used, flags still default to false, but
+ # will be integers if set on the CL
+ puts "Cowbell: #{opts['cowbell']}"
+
+ # You can use hash syntax to access the options as strings or symbols
+ puts "N: #{opts[:n]}"
+
+ # You can check to see if Options were set
+ puts "Pattern: #{opts.p}" if opts.include?(:p)
+
+ # Here, range was set to an Array. 
+ puts "Range: #{opts.range.first} #{opts.range.last}"
  
 Which prints out an automatic usage statement:
  Usage: opt_ex.rb [options]
-                                                                                                                                                             
+ 
    MANDATORY ARGS:
-     -i, --infile FILE                           Infile, multiple allowed                                                                                     
-
+     -i, --infile FILE                           Infile, multiple allowed
+ 
    OPTIONS:
+     -d, --debug                                 debug mode
+ 
+     -m, --cowbell, --morecowbell                I've got a fever, and this is the only prescription.
+ 
+     -n, -num, --num-values VAL                  The answer to everything
+ 
      -p, --pattern, --glob-pattern PATTERN       glob pattern
-
-     -n, -num, --num-values VAL                  Number of val
-
-         --range ARG                             range: min,max (both >0) default is 5,15
-
-     -v, --verbose                               Verbosity. the more you set, the more we give
-
+ 
+         --range ARG                             range: min,max (both >0) (default is [5, 10])
+ 
      -h, --help                                  (for this help message)
-
 
 === A very simple example with no error checking. Use at your own risk!
 
