@@ -8,7 +8,7 @@ $LOAD_PATH.unshift File.dirname($PROGRAM_NAME) + '/../lib/'
 require 'opt_simple'
 
 defaults = {
-  :n => 42,
+  :num_values => 42,
   :range => [5,10]
 }
 
@@ -51,11 +51,13 @@ puts "Debug" if opts.debug
 # will be integers if set on the CL
 puts "Cowbell: #{opts['cowbell']}"
 
-# You can use hash syntax to access the options as strings or symbols
-puts "N: #{opts[:n]}"
+# Dashes will be replaced by underscores so that method syntax works nicely 
+puts "N: #{opts.num_values}"
+puts "N: #{opts['num-values']}"
 
 # You can check to see if Options were set
-puts "Pattern: #{opts.p}" if opts.include?(:p)
+# and you can use hash syntax to access the options as strings or symbols
+puts "Pattern: #{opts[:p]}" if opts.include?(:p)
 
 # Here, range was set to an Array. 
 puts "Range: #{opts.range.first} #{opts.range.last}"

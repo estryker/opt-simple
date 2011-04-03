@@ -19,7 +19,7 @@ The number of arguments are determined by the 'arity' of the block.
 
 The order in which the parameters are defined dictate their order on the command line.
 
-User defined help banners, summaries or the whole usage statement can be defined. 
+User defined help banners, summaries or the whole usage statement can be set manually. 
 =end
 class OptSimple
   attr_accessor :args
@@ -290,7 +290,7 @@ class OptSimple
 
     parm.names.each do | n |
       if @param_names.has_key?(n)
-	raise OptSimple::Error.new "Command line switch already in use!"
+	raise OptSimple::Error.new "Command line switch already in use: #{n}"
       else
 	@param_names[n] = true
       end
@@ -328,7 +328,11 @@ class OptSimple
       names = []
       switches.each do  |s| 
 	st = s.sub(/^-+/,'')
-	names << st << st.to_sym
+	names << st << st.to_sym 
+	if st.include?('-')
+	  st2 = st.gsub('-','_') 
+	  names << st2 << st2.to_sym
+	end
       end
       names 
     end

@@ -6,7 +6,7 @@ class TestHelpStatement < Test::Unit::TestCase
 
   must "add default info to help string" do 
     defaults = {
-      'a' => 1000
+      :a => 1000
     }
     os = OptSimple.new(defaults)
     os.add_parameter(OptSimple::Option.new '-a' )

@@ -115,5 +115,15 @@ class TestHelpStatement < Test::Unit::TestCase
     assert_equal o.v, false
   end
 
+  must "add undersore versions to all switch names that have a dash" do 
+    os = OptSimple.new({},%w[--some-stuff foo])
+    o = os.parse_opts! do 
+      option %w[-s --some-stuff]
+    end
+
+    assert o.include? 'some_stuff'
+    assert_equal o[:some_stuff],"foo"
+  end
+
 end
 
