@@ -115,16 +115,6 @@ class OptSimple
       @parameters.each do | parm |
 	intersection = @args & parm.switches
 	
-	# load the defaults for this particular parm no matter what is on the CL
-	default_switches = @defaults.keys & parm.names
-	if default_switches.length > 1
-	  raise OptSimple::Error "Clashes in the defaults for #{parm.switches}"
-	elsif default_switches.length == 1
-	  # set the default value before we see what is on the CL
-	  parm.param_options[default_switches.first] = @defaults[default_switches.first]
-	  @results.merge! parm.param_options
-	end
-
 	unless intersection.empty?
 	  mandatory_check.delete(parm.switches)
 	  
@@ -215,10 +205,12 @@ class OptSimple
   # and the values set to true when  seen on the CL
   def flag(switches,help="",&block)
     parm = Flag.new(switches,help,&block)
-    add_parameter(parm)
+    parm.set_opt false
+    add_parameter parm 
 
+    # add it to the results to make checking flags nicer. 
     # use the first name b/c they are all aliased anyways.
-    @defaults[parm.names.first] = false
+    @results.merge! parm.param_options
   end
 
   # Registers an optional parameter, with one or more argument following it.
@@ -230,7 +222,18 @@ class OptSimple
   # leading '-'s removed) will be used as keys in the Result 
   # and the values set to the arg following the switch on the CL.
   def option(switches,help="",metavar="ARG",&block)
-    add_parameter(Option.new(switches,help,metavar,&block))
+    parm = Option.new(switches,help,metavar,&block)
+    
+    # set the defaults, if there are any in the defaults hash
+    intersection = parm.names & @defaults.keys
+    if intersection.length == 1
+      parm.set_opt @defaults[intersection.first]
+      @results.merge! parm.param_options
+    elsif intersection.length > 1
+      raise OptSimple::Error "Clashes in the defaults for #{parm.switches}"
+    end
+    
+    add_parameter(parm)
   end
 
   # Registers a mandatory parameter, with one or more argument following it.
@@ -418,11 +421,10 @@ class OptSimple
     def initialize(switches,help="",metavar="ARG",&block)
       super(switches,help,&block)
       @metavar = metavar
-      if block_given?
-	@param_options[names.first] = []
-      else
+      unless block_given?
 	@block = Proc.new {|arg| @param_options[names.first] = arg}
       end
+      @first_call = true
     end
 
     def switch_len #:nodoc:
@@ -436,7 +438,12 @@ class OptSimple
 
     # append val to the parameter list
     def accumulate_opt(val)
-      @param_options[names.first] << val
+      if @first_call
+	@param_options[names.first] = [val].flatten
+      else
+	@param_options[names.first] << val
+      end
+      @first_call = false
     end
 
   end

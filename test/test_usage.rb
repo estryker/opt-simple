@@ -125,5 +125,15 @@ class TestHelpStatement < Test::Unit::TestCase
     assert_equal o[:some_stuff],"foo"
   end
 
+  must "overwrite defaults when accumulate opt is used and option is seen on the CL" do
+    os = OptSimple.new({:some_stuff => ['bar']},%w[--some-stuff foo --some-stuff bar])
+    o = os.parse_opts! do 
+      option %w[-s --some-stuff] do | arg |
+	accumulate_opt arg
+      end
+    end
+
+    assert_equal o.some_stuff, %w[foo bar]
+  end
 end
 
