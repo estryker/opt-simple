@@ -424,7 +424,7 @@ class OptSimple
       unless block_given?
 	@block = Proc.new {|arg| @param_options[names.first] = arg}
       end
-      @first_call = true
+      @first_call = true # use this so we can accumulate non-defaults
     end
 
     def switch_len #:nodoc:
