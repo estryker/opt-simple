@@ -1,6 +1,6 @@
-#!/usr/bin/env ruby1.9.1
+#!/usr/bin/env ruby
 
-# ./opt_ex6.rb -i foo.bar --infile bar.in -v -v --verbose -v 
+# ./opt_ex.rb -m --range 7 20  --more-cowbell -m
 
 $LOAD_PATH.unshift File.dirname($PROGRAM_NAME)
 $LOAD_PATH.unshift File.dirname($PROGRAM_NAME) + '/../lib/'
@@ -8,6 +8,7 @@ $LOAD_PATH.unshift File.dirname($PROGRAM_NAME) + '/../lib/'
 require 'opt_simple'
 
 defaults = {
+  :glob_pattern => '*',
   :num_values => 42,
   :range => [5,10]
 }

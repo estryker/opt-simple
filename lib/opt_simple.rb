@@ -274,8 +274,10 @@ class OptSimple
 	intersection = @defaults.keys & parm.names unless parm.class == Flag
 	if intersection.empty?
 	  help_str << "\n\n"
+	elsif @defaults[intersection.first].nil?
+	  help_str << " (default is 'nil')\n\n"
 	else
-	  help_str << " (default is #{@defaults[intersection.first]})\n\n"
+	  help_str << " (default is '#{@defaults[intersection.first]}')\n\n"
 	end
       end
       help_str << "  SUMMARY:\n\n    #{@summary}\n\n" unless @summary.empty?
