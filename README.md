@@ -307,6 +307,6 @@ Which prints out an automatic usage statement:
 ```
 ## Questions and/or Comments
   
-email {Ethan Stryker}[mailto:e.stryker@gmail.com]
+email [Ethan Stryker](mailto:e.stryker@gmail.com])
  
  
