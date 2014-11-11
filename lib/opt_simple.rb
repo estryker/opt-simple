@@ -62,7 +62,8 @@ class OptSimple
     # call the block to register all the parameters and
     # their corresponding code blocks
     # We use instance_exec so that the API is cleaner. 
-    instance_exec(@results,&block) 
+    instance_exec(@results,&block)
+    self
   end
 
   # Parse the options, destructively pulling them out of the args array as it goes.
@@ -127,13 +128,27 @@ class OptSimple
 	  # of @args, so we don't disrupt the other locations, but put them into 'chunks'
 	  # backwards to restore their order. 
 	  chunks = []
-	  arg_locations.sort.reverse.each do |loc|  
-	    chunks.unshift @args.slice!(loc .. loc + parm.block.arity)[1..-1]
+
+	  arg_locations.sort.reverse.each do |loc| 
+	    # use the block's arity (Proc.new {|a,b| ...} has arity 2)
+	    # to determine how many args to slice off
+	    num_to_get = parm.block.arity 
+	    
+	    # but blocks with arity of -1 take a variable number of args
+	    # e.g. Proc.new {|*args| } has arity -1 (splat)
+	    if num_to_get == -1
+	      # so either go to the next switch, or if there is no switch, to the end of the @args list
+	      num_to_get = @args[loc + 1 ..-1].index {|a| a.start_with?('-')} || @args[loc + 1 ..-1].length
+	    end
+
+	    end_loc = loc + num_to_get
+	    chunks.unshift @args.slice!(loc .. end_loc)[1..-1]
 	  end
 	  
 	  chunks.each do | pieces |
-	    if pieces.length < parm.block.arity or
-		pieces.any? {|p| p.start_with?('-')}
+	    if parm.block.arity > 0 and 
+		(pieces.length < parm.block.arity or
+		 pieces.any? {|p| p.start_with?('-')})
 	      raise OptSimple::ParameterUsageError.new "Not enough args following #{intersection}",self 
 	    end
 	    
@@ -394,7 +409,8 @@ class OptSimple
       if block_given?
 	@param_options[names.first] = false
       else
-	@block = Proc.new { @param_options[names.first] = true}
+	#@block = Proc.new { @param_options[names.first] = true}
+	@block = Proc.new { set_opt true }
       end
     end
     
@@ -424,7 +440,8 @@ class OptSimple
       super(switches,help,&block)
       @metavar = metavar
       unless block_given?
-	@block = Proc.new {|arg| @param_options[names.first] = arg}
+	#@block = Proc.new {|arg| @param_options[names.first] = arg}
+	@block = Proc.new {|arg| set_opt arg}
       end
       @first_call = true # use this so we can accumulate non-defaults
     end

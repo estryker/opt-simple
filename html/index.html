@@ -1,32 +1,117 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
-  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<html>
 <head>
-  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+<meta charset="UTF-8">
 
-  <title>RDoc Documentation</title>
+<title>RDoc Documentation</title>
 
-  <link type="text/css" media="screen" href="rdoc.css" rel="stylesheet" />
+<link href="./fonts.css" rel="stylesheet">
+<link href="./rdoc.css" rel="stylesheet">
 
-  <script src="js/jquery.js" type="text/javascript" charset="utf-8"></script>
-  <script src="js/thickbox-compressed.js" type="text/javascript" charset="utf-8"></script>
-  <script src="js/quicksearch.js" type="text/javascript" charset="utf-8"></script>
-  <script src="js/darkfish.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+  var rdoc_rel_prefix = "./";
+</script>
 
-</head>
-<body class="indexpage">
+<script src="./js/jquery.js"></script>
+<script src="./js/navigation.js"></script>
+<script src="./js/search_index.js"></script>
+<script src="./js/search.js"></script>
+<script src="./js/searcher.js"></script>
+<script src="./js/darkfish.js"></script>
 
+
+<body id="top" role="document" class="file">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="./index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="./table_of_contents.html#pages">Pages</a>
+    <a href="./table_of_contents.html#classes">Classes</a>
+    <a href="./table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  <div id="project-metadata">
+    <div id="fileindex-section" class="nav-section">
+  <h3>Pages</h3>
+
+  <ul class="link-list">
   
-  <h1>RDoc Documentation</h1>
-
+    <li><a href="./README.html">README</a>
   
-  <div id="main">
-    
-<h2><a href="OptSimple.html">OptSimple</a> provides a very simple interface to command line parsing. </h2>
+  </ul>
+</div>
 
-<h2>Description</h2>
+    <div id="classindex-section" class="nav-section">
+  <h3>Class and Module Index</h3>
+
+  <ul class="link-list">
+  
+    <li><a href="./Object.html">Object</a>
+  
+    <li><a href="./OptSimple.html">OptSimple</a>
+  
+    <li><a href="./OptSimple/Argument.html">OptSimple::Argument</a>
+  
+    <li><a href="./OptSimple/Error.html">OptSimple::Error</a>
+  
+    <li><a href="./OptSimple/Flag.html">OptSimple::Flag</a>
+  
+    <li><a href="./OptSimple/InvalidOption.html">OptSimple::InvalidOption</a>
+  
+    <li><a href="./OptSimple/MissingArgument.html">OptSimple::MissingArgument</a>
+  
+    <li><a href="./OptSimple/Option.html">OptSimple::Option</a>
+  
+    <li><a href="./OptSimple/Parameter.html">OptSimple::Parameter</a>
+  
+    <li><a href="./OptSimple/ParameterUsageError.html">OptSimple::ParameterUsageError</a>
+  
+    <li><a href="./OptSimple/Result.html">OptSimple::Result</a>
+  
+    <li><a href="./Option.html">Option</a>
+  
+    <li><a href="./Test.html">Test</a>
+  
+    <li><a href="./Test/Unit.html">Test::Unit</a>
+  
+    <li><a href="./Test/Unit/TestCase.html">Test::Unit::TestCase</a>
+  
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main">
+
+
+<h2 id="label-OptSimple+provides+a+very+simple+interface+to+command+line+parsing.+"><a href="OptSimple.html">OptSimple</a> provides a very simple interface to command line parsing. <span><a href="#label-OptSimple+provides+a+very+simple+interface+to+command+line+parsing.+">&para;</a> <a href="#documentation">&uarr;</a></span></h2>
+
+<h2 id="label-Description">Description<span><a href="#label-Description">&para;</a> <a href="#documentation">&uarr;</a></span></h2>
 
 <p>Parameter specification, validity checking and argument transformations can
 be put in one place, default parameters are easily set, and an automatic
@@ -41,12 +126,13 @@ option - an optional command line parameter with one or more arguments
 argument - a mandatory command line parameter with one or more arguments</pre>
 
 <p>Inside the blocks in flag, option, and argument a shortcut function called
-‘set_opt’ can be used to set an option that will be returned in the Result.
-The ‘accumulate_opt’ method can be used in the option and argument blocks
-to create a list of values, and in  the flag block to increment a counter
-(with verbosity being the classic example).</p>
+&#39;set_opt&#39; can be used to set an option that will be returned in the
+Result. The &#39;accumulate_opt&#39; method can be used in the option and
+argument blocks to create a list of values, and in  the flag block to
+increment a counter (with verbosity being the classic example).</p>
 
-<p>The number of arguments are determined by the ‘arity’ of the block.</p>
+<p>The number of arguments are determined by the &#39;arity&#39; of the block,
+or a variable number if the splat operator is used.</p>
 
 <p>The order in which the parameters are defined dictate their order on the
 command line.</p>
@@ -54,78 +140,87 @@ command line.</p>
 <p>User defined help banners, summaries or the whole usage statement can be
 defined.</p>
 
-<h2>Documentation</h2>
+<h2 id="label-Documentation">Documentation<span><a href="#label-Documentation">&para;</a> <a href="#documentation">&uarr;</a></span></h2>
 
 <p>See <a href="OptSimple.html">OptSimple</a> for the API specification</p>
 
-<h2>Installation</h2>
+<h2 id="label-Installation">Installation<span><a href="#label-Installation">&para;</a> <a href="#documentation">&uarr;</a></span></h2>
 
 <p>It is recommended to install <a href="OptSimple.html">OptSimple</a> using
 RubyGems:</p>
 
 <pre>$ sudo gem install opt-simple</pre>
 
-<h2>Examples</h2>
+<h2 id="label-Examples">Examples<span><a href="#label-Examples">&para;</a> <a href="#documentation">&uarr;</a></span></h2>
 
-<h3>One example that shows most of the behavior you might use</h3>
+<h3 id="label-One+example+that+shows+most+of+the+behavior+you+might+use">One example that shows most of the behavior you might use<span><a href="#label-One+example+that+shows+most+of+the+behavior+you+might+use">&para;</a> <a href="#documentation">&uarr;</a></span></h3>
 
-<pre>require 'opt_simple'
+<pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&#39;opt_simple&#39;</span>
 
-defaults = {  
-  :glob_pattern =&gt; '*',
-  :num_results =&gt; 42,
-  :range =&gt; [5,10]
+<span class="ruby-identifier">defaults</span> = {  
+  :<span class="ruby-identifier">glob_pattern</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;*&#39;</span>,
+  :<span class="ruby-identifier">num_results</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">42</span>,
+  :<span class="ruby-identifier">range</span> =<span class="ruby-operator">&gt;</span> [<span class="ruby-value">5</span>,<span class="ruby-value">10</span>]
 }
 
-opts = OptSimple.new(defaults).parse_opts! do 
-  argument %w[-i --infile], &quot;Infile, multiple allowed&quot;, &quot;FILE&quot; do | arg |
-    accumulate_opt arg
-  end
+<span class="ruby-identifier">opts</span> = <span class="ruby-constant">OptSimple</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">defaults</span>).<span class="ruby-identifier">parse_opts!</span> <span class="ruby-keyword">do</span> 
+  <span class="ruby-identifier">argument</span> <span class="ruby-node">%w[-i --infile]</span>, <span class="ruby-string">&quot;Infile, multiple allowed&quot;</span>, <span class="ruby-string">&quot;FILE&quot;</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">arg</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">accumulate_opt</span> <span class="ruby-identifier">arg</span>
+  <span class="ruby-keyword">end</span>
 
-  flag %w[-d --debug],&quot;debug mode&quot;
+  <span class="ruby-identifier">flag</span> <span class="ruby-node">%w[-d --debug]</span>,<span class="ruby-string">&quot;debug mode&quot;</span>
 
-  flag %w[-m --cowbell --morecowbell],&quot;I've got a fever, and this is the only prescription.&quot; do 
-    accumulate_opt
-  end
+  <span class="ruby-identifier">flag</span> <span class="ruby-node">%w[-m --cowbell --morecowbell]</span>,<span class="ruby-string">&quot;I&#39;ve got a fever, and this is the only prescription.&quot;</span> <span class="ruby-keyword">do</span> 
+    <span class="ruby-identifier">accumulate_opt</span>
+  <span class="ruby-keyword">end</span>
 
-  option %w[-n -num --num-values],&quot;The answer to everything&quot;,&quot;VAL&quot; do |arg|
-    set_opt arg.to_i
-  end
+  <span class="ruby-identifier">option</span> <span class="ruby-node">%w[-n -num --num-values]</span>,<span class="ruby-string">&quot;The answer to everything&quot;</span>,<span class="ruby-string">&quot;VAL&quot;</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">arg</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">set_opt</span> <span class="ruby-identifier">arg</span>.<span class="ruby-identifier">to_i</span>
+  <span class="ruby-keyword">end</span>
 
-  option %w[-p --pattern --glob-pattern], &quot;glob pattern&quot;,&quot;PATTERN&quot;
+  <span class="ruby-identifier">option</span> <span class="ruby-node">%w[-p --pattern --glob-pattern]</span>, <span class="ruby-string">&quot;glob pattern&quot;</span>,<span class="ruby-string">&quot;PATTERN&quot;</span>
 
-  option &quot;--range&quot;, &quot;range: min,max (both &gt;0)&quot; do | arg1,arg2 |
-    min,max = [arg1.to_i,arg2.to_i]
-    set_opt [min,max]
+  <span class="ruby-comment"># this block has arity 2, so it expects two args to follow</span>
+  <span class="ruby-identifier">option</span> <span class="ruby-string">&quot;--range&quot;</span>, <span class="ruby-string">&quot;range: min,max (both &gt;0)&quot;</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">arg1</span>,<span class="ruby-identifier">arg2</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">min</span>,<span class="ruby-identifier">max</span> = [<span class="ruby-identifier">arg1</span>.<span class="ruby-identifier">to_i</span>,<span class="ruby-identifier">arg2</span>.<span class="ruby-identifier">to_i</span>]
+    <span class="ruby-identifier">set_opt</span> [<span class="ruby-identifier">min</span>,<span class="ruby-identifier">max</span>]
 
-    error &quot;max must be greater than min&quot; unless max &gt; min
-    error &quot;both must be &gt;=0&quot; if min &lt; 0
-  end
-end
+    <span class="ruby-identifier">error</span> <span class="ruby-string">&quot;max must be greater than min&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">max</span> <span class="ruby-operator">&gt;</span> <span class="ruby-identifier">min</span>
+    <span class="ruby-identifier">error</span> <span class="ruby-string">&quot;both must be &gt;=0&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">min</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span>
+  <span class="ruby-keyword">end</span>  
 
-puts &quot;Options&quot;
-puts opts
+  <span class="ruby-comment"># this block says that there are a variable number of arguments allowed</span>
+  <span class="ruby-identifier">option</span> <span class="ruby-node">%w[-t --things]</span>,<span class="ruby-string">&quot;Some things - variable number allowed&quot;</span>,<span class="ruby-string">&quot;THINGS&quot;</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">args</span>.<span class="ruby-identifier">each</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">a</span><span class="ruby-operator">|</span> <span class="ruby-identifier">accumulate_opt</span> <span class="ruby-identifier">a</span> }
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
 
-# you can use method syntax to access the options
-puts &quot;Infile list: #{opts.infile}&quot;
+<span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;Options&quot;</span>
+<span class="ruby-identifier">puts</span> <span class="ruby-identifier">opts</span>
 
-# Flags are set to false by default
-puts &quot;Debug&quot; if opts.debug
+<span class="ruby-comment"># you can use method syntax to access the options</span>
+<span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Infile list: #{opts.infile}&quot;</span>
 
-# If accumulate_opt is used, flags still default to false, but
-# will be integers if set on the CL
-puts &quot;Cowbell: #{opts['cowbell']}&quot;
+<span class="ruby-comment"># Flags are set to false by default</span>
+<span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;Debug&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">debug</span>
 
-# Dashes will be replaced by underscores so that method syntax works nicely 
-puts &quot;N: #{opts.num_values}&quot;
-puts &quot;N: #{opts['num-values']}&quot;
+<span class="ruby-comment"># If accumulate_opt is used, flags still default to false, but</span>
+<span class="ruby-comment"># will be integers if set on the CL</span>
+<span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Cowbell: #{opts[&#39;cowbell&#39;]}&quot;</span>
 
-# You can check to see if Options were set
-# and you can use hash syntax to access the options as strings or symbols
-puts &quot;Pattern: #{opts[:p]}&quot; if opts.include?(:p)
+<span class="ruby-comment"># Dashes will be replaced by underscores so that method syntax works nicely </span>
+<span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;N: #{opts.num_values}&quot;</span>
+<span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;N: #{opts[&#39;num-values&#39;]}&quot;</span>
 
-# Here, range was set to an Array. 
-puts &quot;Range: #{opts.range.first} #{opts.range.last}&quot;</pre>
+<span class="ruby-comment"># You can check to see if Options were set</span>
+<span class="ruby-comment"># and you can use hash syntax to access the options as strings or symbols</span>
+<span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Pattern: #{opts[:p]}&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">include?</span>(:<span class="ruby-identifier">p</span>)
+
+<span class="ruby-comment"># Here, range was set to an Array. </span>
+<span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Range: #{opts.range.first} #{opts.range.last}&quot;</span>
+
+<span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Things: #{opts.things.inspect}&quot;</span>
+</pre>
 
 <p>Which prints out an automatic usage statement:</p>
 
@@ -137,74 +232,79 @@ puts &quot;Range: #{opts.range.first} #{opts.range.last}&quot;</pre>
   OPTIONS:
     -d, --debug                                 debug mode
 
-    -m, --cowbell, --morecowbell                I've got a fever, and this is the only prescription.
+    -m, --cowbell, --morecowbell                I&#39;ve got a fever, and this is the only prescription.
 
     -n, -num, --num-values VAL                  The answer to everything
 
-    -p, --pattern, --glob-pattern PATTERN       glob pattern (default is '*')
+    -p, --pattern, --glob-pattern PATTERN       glob pattern (default is &#39;*&#39;)
 
-        --range ARG                             range: min,max (both &gt;0) (default is '[5, 10]')
+        --range ARG                             range: min,max (both &gt;0) (default is &#39;[5, 10]&#39;)
+
+        -t, --things THINGS                         Some things - variable number allowed 
 
     -h, --help                                  (for this help message)</pre>
 
-<h3>A very simple example with no error checking. Use at your own risk!</h3>
+<h3 id="label-A+very+simple+example+with+no+error+checking.+Use+at+your+own+risk%21">A very simple example with no error checking. Use at your own risk!<span><a href="#label-A+very+simple+example+with+no+error+checking.+Use+at+your+own+risk%21">&para;</a> <a href="#documentation">&uarr;</a></span></h3>
 
-<pre>require 'opt_simple'
+<pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&#39;opt_simple&#39;</span>
 
-defaults = {
-'max' =&gt; 40
+<span class="ruby-identifier">defaults</span> = {
+<span class="ruby-string">&#39;max&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">40</span>
 } 
 
-options = OptSimple.new(defaults).parse_opts! 
+<span class="ruby-identifier">options</span> = <span class="ruby-constant">OptSimple</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">defaults</span>).<span class="ruby-identifier">parse_opts!</span> 
 
-puts &quot;Options&quot;
-puts options</pre>
+<span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;Options&quot;</span>
+<span class="ruby-identifier">puts</span> <span class="ruby-identifier">options</span>
+</pre>
 
-<h3>An example using all default behavior </h3>
+<h3 id="label-An+example+using+all+default+behavior+">An example using all default behavior <span><a href="#label-An+example+using+all+default+behavior+">&para;</a> <a href="#documentation">&uarr;</a></span></h3>
 
-<pre>require 'opt_simple'
+<pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&#39;opt_simple&#39;</span>
 
-options = OptSimple.new.parse_opts! do 
-  argument &quot;-i&quot;,&quot;inFile&quot;,&quot;FILE&quot;
-  option %w[-p --pattern --glob-pattern], &quot;glob pattern&quot;,&quot;PATTERN&quot;
-  flag &quot;-v&quot;,&quot;Verbose&quot;
-  flag &quot;-whatever&quot;
-end
+<span class="ruby-identifier">options</span> = <span class="ruby-constant">OptSimple</span>.<span class="ruby-identifier">new</span>.<span class="ruby-identifier">parse_opts!</span> <span class="ruby-keyword">do</span> 
+  <span class="ruby-identifier">argument</span> <span class="ruby-string">&quot;-i&quot;</span>,<span class="ruby-string">&quot;inFile&quot;</span>,<span class="ruby-string">&quot;FILE&quot;</span>
+  <span class="ruby-identifier">option</span> <span class="ruby-node">%w[-p --pattern --glob-pattern]</span>, <span class="ruby-string">&quot;glob pattern&quot;</span>,<span class="ruby-string">&quot;PATTERN&quot;</span>
+  <span class="ruby-identifier">flag</span> <span class="ruby-string">&quot;-v&quot;</span>,<span class="ruby-string">&quot;Verbose&quot;</span>
+  <span class="ruby-identifier">flag</span> <span class="ruby-string">&quot;-whatever&quot;</span>
+<span class="ruby-keyword">end</span>
 
-puts &quot;Options&quot;
-puts options</pre>
+<span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;Options&quot;</span>
+<span class="ruby-identifier">puts</span> <span class="ruby-identifier">options</span>
+</pre>
 
-<h3>An example that shows how to set the banner string, and add a summary.</h3>
+<h3 id="label-An+example+that+shows+how+to+set+the+banner+string%2C+and+add+a+summary.">An example that shows how to set the banner string, and add a summary.<span><a href="#label-An+example+that+shows+how+to+set+the+banner+string%2C+and+add+a+summary.">&para;</a> <a href="#documentation">&uarr;</a></span></h3>
 
-<pre>require 'opt_simple'
+<pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&#39;opt_simple&#39;</span>
 
-defaults = {
-  &quot;max&quot; =&gt; 10
+<span class="ruby-identifier">defaults</span> = {
+  <span class="ruby-string">&quot;max&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">10</span>
 }
 
-options = OptSimple.new(defaults).parse_opts! do 
-  banner &quot;USAGE: #{$0}&quot;
-  summary &quot;Show how to set a banner and summary.&quot;
+<span class="ruby-identifier">options</span> = <span class="ruby-constant">OptSimple</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">defaults</span>).<span class="ruby-identifier">parse_opts!</span> <span class="ruby-keyword">do</span> 
+  <span class="ruby-identifier">banner</span> <span class="ruby-node">&quot;USAGE: #{$0}&quot;</span>
+  <span class="ruby-identifier">summary</span> <span class="ruby-string">&quot;Show how to set a banner and summary.&quot;</span>
 
-  argument &quot;-i&quot;,&quot;inFile&quot; 
-  option %w[-m -max --maximum-value],&quot;Maximum val&quot; do |arg|
-    set_opt arg.to_i
-  end
-end
+  <span class="ruby-identifier">argument</span> <span class="ruby-string">&quot;-i&quot;</span>,<span class="ruby-string">&quot;inFile&quot;</span> 
+  <span class="ruby-identifier">option</span> <span class="ruby-node">%w[-m -max --maximum-value]</span>,<span class="ruby-string">&quot;Maximum val&quot;</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">arg</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">set_opt</span> <span class="ruby-identifier">arg</span>.<span class="ruby-identifier">to_i</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
 
-puts &quot;Options&quot;
-puts options</pre>
+<span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;Options&quot;</span>
+<span class="ruby-identifier">puts</span> <span class="ruby-identifier">options</span>
+</pre>
 
-<h3>An example that shows that you can easily set your defaults in normal Ruby variables and provide your own help.</h3>
+<h3 id="label-An+example+that+shows+that+you+can+easily+set+your+defaults+in+normal+Ruby+variables+and+provide+your+own+help.">An example that shows that you can easily set your defaults in normal Ruby variables and provide your own help.<span><a href="#label-An+example+that+shows+that+you+can+easily+set+your+defaults+in+normal+Ruby+variables+and+provide+your+own+help.">&para;</a> <a href="#documentation">&uarr;</a></span></h3>
 
-<pre>require 'opt_simple'
+<pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&#39;opt_simple&#39;</span>
 
-in_file = nil
-min = 0
-max = 10
-pattern = &quot;*&quot;
+<span class="ruby-identifier">in_file</span> = <span class="ruby-keyword">nil</span>
+<span class="ruby-identifier">min</span> = <span class="ruby-value">0</span>
+<span class="ruby-identifier">max</span> = <span class="ruby-value">10</span>
+<span class="ruby-identifier">pattern</span> = <span class="ruby-string">&quot;*&quot;</span>
 
-usage_string = &lt;&lt;-UL
+<span class="ruby-identifier">usage_string</span> = <span class="ruby-value">&lt;&lt;-UL
 Usage: $0 [options]
 
   -i, --infile FILE
@@ -213,261 +313,127 @@ Usage: $0 [options]
  [-v (verbose)]
  [-h, --help (help)]
 
-UL
+UL</span>
 
-OptSimple.new.parse_opts! do 
-  help usage_string
+<span class="ruby-constant">OptSimple</span>.<span class="ruby-identifier">new</span>.<span class="ruby-identifier">parse_opts!</span> <span class="ruby-keyword">do</span> 
+  <span class="ruby-identifier">help</span> <span class="ruby-identifier">usage_string</span>
 
-  argument %w[-i --infile],&quot;inFile&quot; do |arg|
-    in_file = arg
-    error &quot;inFile must exist and be readable&quot; unless(File.readable?(in_file))
-  end
+  <span class="ruby-identifier">argument</span> <span class="ruby-node">%w[-i --infile]</span>,<span class="ruby-string">&quot;inFile&quot;</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">arg</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">in_file</span> = <span class="ruby-identifier">arg</span>
+    <span class="ruby-identifier">error</span> <span class="ruby-string">&quot;inFile must exist and be readable&quot;</span> <span class="ruby-keyword">unless</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">readable?</span>(<span class="ruby-identifier">in_file</span>))
+  <span class="ruby-keyword">end</span>
 
-  option [&quot;--range&quot;], &quot;range: min,max (both &gt;0) default is #{min},#{max}&quot; do | arg1,arg2 |
-    min = arg1.to_i
-    max = arg2.to_i    
+  <span class="ruby-identifier">option</span> [<span class="ruby-string">&quot;--range&quot;</span>], <span class="ruby-node">&quot;range: min,max (both &gt;0) default is #{min},#{max}&quot;</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">arg1</span>,<span class="ruby-identifier">arg2</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">min</span> = <span class="ruby-identifier">arg1</span>.<span class="ruby-identifier">to_i</span>
+    <span class="ruby-identifier">max</span> = <span class="ruby-identifier">arg2</span>.<span class="ruby-identifier">to_i</span>    
 
-    error &quot;max must be greater than min&quot; unless max &gt; min
-    error &quot;both must be &gt;=0&quot; if min &lt; 0
-  end  
+    <span class="ruby-identifier">error</span> <span class="ruby-string">&quot;max must be greater than min&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">max</span> <span class="ruby-operator">&gt;</span> <span class="ruby-identifier">min</span>
+    <span class="ruby-identifier">error</span> <span class="ruby-string">&quot;both must be &gt;=0&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">min</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span>
+  <span class="ruby-keyword">end</span>  
 
-  option %w[-p --pattern --glob-pattern], &quot;glob pattern, default is #{pattern}&quot; do |arg|
-    pattern = arg
-  end
+  <span class="ruby-identifier">option</span> <span class="ruby-node">%w[-p --pattern --glob-pattern]</span>, <span class="ruby-node">&quot;glob pattern, default is #{pattern}&quot;</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">arg</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">pattern</span> = <span class="ruby-identifier">arg</span>
+  <span class="ruby-keyword">end</span>
 
-  flag &quot;-v&quot;,&quot;Verbose&quot;
-end
+  <span class="ruby-identifier">flag</span> <span class="ruby-string">&quot;-v&quot;</span>,<span class="ruby-string">&quot;Verbose&quot;</span>
+<span class="ruby-keyword">end</span>
 
-puts &quot;in_file #{in_file}&quot;
-puts &quot;min #{min}&quot;
-puts &quot;max #{max}&quot;
-puts &quot;pattern #{pattern}&quot;
+<span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;in_file #{in_file}&quot;</span>
+<span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;min #{min}&quot;</span>
+<span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;max #{max}&quot;</span>
+<span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;pattern #{pattern}&quot;</span>
 
-puts &quot;ARGV&quot;
-puts ARGV</pre>
+<span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;ARGV&quot;</span>
+<span class="ruby-identifier">puts</span> <span class="ruby-constant">ARGV</span>
+</pre>
 
-<h3>An example showing how to register parms in multiple places before parsing the command line</h3>
+<h3 id="label-An+example+showing+how+to+register+parms+in+multiple+places+before+parsing+the+command+line">An example showing how to register parms in multiple places before parsing the command line<span><a href="#label-An+example+showing+how+to+register+parms+in+multiple+places+before+parsing+the+command+line">&para;</a> <a href="#documentation">&uarr;</a></span></h3>
 
-<pre>require 'opt_simple'
+<pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&#39;opt_simple&#39;</span>
 
-min = 5
-max = 15
+<span class="ruby-identifier">min</span> = <span class="ruby-value">5</span>
+<span class="ruby-identifier">max</span> = <span class="ruby-value">15</span>
 
-os = OptSimple.new
+<span class="ruby-identifier">os</span> = <span class="ruby-constant">OptSimple</span>.<span class="ruby-identifier">new</span>
 
-os.register_opts do 
-  argument %w[-i --infile], &quot;Infile, multiple allowed&quot;, &quot;FILE&quot; do | arg |
-    accumulate_opt arg
-  end
+<span class="ruby-identifier">os</span>.<span class="ruby-identifier">register_opts</span> <span class="ruby-keyword">do</span> 
+  <span class="ruby-identifier">argument</span> <span class="ruby-node">%w[-i --infile]</span>, <span class="ruby-string">&quot;Infile, multiple allowed&quot;</span>, <span class="ruby-string">&quot;FILE&quot;</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">arg</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">accumulate_opt</span> <span class="ruby-identifier">arg</span>
+  <span class="ruby-keyword">end</span>
 
-  option %w[-p --pattern --glob-pattern], &quot;glob pattern&quot;,&quot;PATTERN&quot;
-end
+  <span class="ruby-identifier">option</span> <span class="ruby-node">%w[-p --pattern --glob-pattern]</span>, <span class="ruby-string">&quot;glob pattern&quot;</span>,<span class="ruby-string">&quot;PATTERN&quot;</span>
+<span class="ruby-keyword">end</span>
 
-os.register_opts do 
-  option %w[-n -num --num-values],&quot;Number of val&quot;,&quot;VAL&quot; do |arg|
-    set_opt arg.to_i
-  end
+<span class="ruby-identifier">os</span>.<span class="ruby-identifier">register_opts</span> <span class="ruby-keyword">do</span> 
+  <span class="ruby-identifier">option</span> <span class="ruby-node">%w[-n -num --num-values]</span>,<span class="ruby-string">&quot;Number of val&quot;</span>,<span class="ruby-string">&quot;VAL&quot;</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">arg</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">set_opt</span> <span class="ruby-identifier">arg</span>.<span class="ruby-identifier">to_i</span>
+  <span class="ruby-keyword">end</span>
 
-  option &quot;--range&quot;, &quot;range: min,max (both &gt;0) default is #{min},#{max}&quot; do | arg1,arg2 |
-    min = arg1.to_i
-    max = arg2.to_i    
+  <span class="ruby-identifier">option</span> <span class="ruby-string">&quot;--range&quot;</span>, <span class="ruby-node">&quot;range: min,max (both &gt;0) default is #{min},#{max}&quot;</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">arg1</span>,<span class="ruby-identifier">arg2</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">min</span> = <span class="ruby-identifier">arg1</span>.<span class="ruby-identifier">to_i</span>
+    <span class="ruby-identifier">max</span> = <span class="ruby-identifier">arg2</span>.<span class="ruby-identifier">to_i</span>    
 
-    error &quot;max must be greater than min&quot; unless max &gt; min
-    error &quot;both must be &gt;=0&quot; if min &lt; 0
-  end
+    <span class="ruby-identifier">error</span> <span class="ruby-string">&quot;max must be greater than min&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">max</span> <span class="ruby-operator">&gt;</span> <span class="ruby-identifier">min</span>
+    <span class="ruby-identifier">error</span> <span class="ruby-string">&quot;both must be &gt;=0&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">min</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span>
+  <span class="ruby-keyword">end</span>
 
-  flag %w[-v  --verbose],&quot;Verbosity. the more you set, the more we give&quot; do 
-    accumulate_opt
-  end
-end
+  <span class="ruby-identifier">flag</span> <span class="ruby-node">%w[-v  --verbose]</span>,<span class="ruby-string">&quot;Verbosity. the more you set, the more we give&quot;</span> <span class="ruby-keyword">do</span> 
+    <span class="ruby-identifier">accumulate_opt</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
 
-options = os.parse_opts!
+<span class="ruby-identifier">options</span> = <span class="ruby-identifier">os</span>.<span class="ruby-identifier">parse_opts!</span>
 
-puts &quot;Options&quot;
-puts options</pre>
+<span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;Options&quot;</span>
+<span class="ruby-identifier">puts</span> <span class="ruby-identifier">options</span>
+</pre>
 
-<h3>A totally contrived example showing how to change multiple options within an option specification block</h3>
+<h3 id="label-A+totally+contrived+example+showing+how+to+change+multiple+options+within+an+option+specification+block">A totally contrived example showing how to change multiple options within an option specification block<span><a href="#label-A+totally+contrived+example+showing+how+to+change+multiple+options+within+an+option+specification+block">&para;</a> <a href="#documentation">&uarr;</a></span></h3>
 
-<pre>require 'opt_simple'
+<pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&#39;opt_simple&#39;</span>
 
-allowed_odds = [1,3,5,7]
-allowed_evens = [2,4,6]
-defaults = {
-  :even_val =&gt; allowed_evens.first,
-  :odd_val =&gt; allowed_odds.first
+<span class="ruby-identifier">allowed_odds</span> = [<span class="ruby-value">1</span>,<span class="ruby-value">3</span>,<span class="ruby-value">5</span>,<span class="ruby-value">7</span>]
+<span class="ruby-identifier">allowed_evens</span> = [<span class="ruby-value">2</span>,<span class="ruby-value">4</span>,<span class="ruby-value">6</span>]
+<span class="ruby-identifier">defaults</span> = {
+  :<span class="ruby-identifier">even_val</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">allowed_evens</span>.<span class="ruby-identifier">first</span>,
+  :<span class="ruby-identifier">odd_val</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">allowed_odds</span>.<span class="ruby-identifier">first</span>
 }
 
-# Note that b/c we define option [--odd] and [--evens] _after_ the max-out flag, 
-# they will override the max-out setting. 
-opts = OptSimple.new(defaults).parse_opts! do | opt_obj |
-  flag %w[-m --max-out], &quot;Maximize evens and odds.&quot; do 
-    opt_obj.odd_val = allowed_odds.last
-    opt_obj.even_val = allowed_evens.last
-  end
+<span class="ruby-comment"># Note that b/c we define option [--odd] and [--evens] _after_ the max-out flag, </span>
+<span class="ruby-comment"># they will override the max-out setting. </span>
+<span class="ruby-identifier">opts</span> = <span class="ruby-constant">OptSimple</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">defaults</span>).<span class="ruby-identifier">parse_opts!</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">opt_obj</span> <span class="ruby-operator">|</span>
+  <span class="ruby-identifier">flag</span> <span class="ruby-node">%w[-m --max-out]</span>, <span class="ruby-string">&quot;Maximize evens and odds.&quot;</span> <span class="ruby-keyword">do</span> 
+    <span class="ruby-identifier">opt_obj</span>.<span class="ruby-identifier">odd_val</span> = <span class="ruby-identifier">allowed_odds</span>.<span class="ruby-identifier">last</span>
+    <span class="ruby-identifier">opt_obj</span>.<span class="ruby-identifier">even_val</span> = <span class="ruby-identifier">allowed_evens</span>.<span class="ruby-identifier">last</span>
+  <span class="ruby-keyword">end</span>
 
-  option &quot;--odd-val&quot;,&quot;Odd val in #{allowed_odds.inspect}&quot;,&quot;VAL&quot; do | arg |
-    val = arg.to_i
-    error &quot;Odd val must be in #{allowed_odds.inspect}&quot; unless allowed_odds.include? val
-    set_opt val
-  end
+  <span class="ruby-identifier">option</span> <span class="ruby-string">&quot;--odd-val&quot;</span>,<span class="ruby-node">&quot;Odd val in #{allowed_odds.inspect}&quot;</span>,<span class="ruby-string">&quot;VAL&quot;</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">arg</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">val</span> = <span class="ruby-identifier">arg</span>.<span class="ruby-identifier">to_i</span>
+    <span class="ruby-identifier">error</span> <span class="ruby-node">&quot;Odd val must be in #{allowed_odds.inspect}&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">allowed_odds</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">val</span>
+    <span class="ruby-identifier">set_opt</span> <span class="ruby-identifier">val</span>
+  <span class="ruby-keyword">end</span>
 
-  option &quot;--even-val&quot;,&quot;Even val #{allowed_evens.inspect}&quot;,&quot;VAL&quot; do | arg |
-    val = arg.to_i
-    error &quot;Even val must be in #{allowed_evens.inspect}&quot; unless allowed_evens.include? val
-    set_opt val
-  end
-end
+  <span class="ruby-identifier">option</span> <span class="ruby-string">&quot;--even-val&quot;</span>,<span class="ruby-node">&quot;Even val #{allowed_evens.inspect}&quot;</span>,<span class="ruby-string">&quot;VAL&quot;</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">arg</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">val</span> = <span class="ruby-identifier">arg</span>.<span class="ruby-identifier">to_i</span>
+    <span class="ruby-identifier">error</span> <span class="ruby-node">&quot;Even val must be in #{allowed_evens.inspect}&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">allowed_evens</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">val</span>
+    <span class="ruby-identifier">set_opt</span> <span class="ruby-identifier">val</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
 
-puts &quot;Options&quot;
-puts opts</pre>
+<span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;Options&quot;</span>
+<span class="ruby-identifier">puts</span> <span class="ruby-identifier">opts</span>
+</pre>
 
-<h2>Questions and/or Comments</h2>
+<h2 id="label-Questions+and%2For+Comments">Questions and/or Comments<span><a href="#label-Questions+and%2For+Comments">&para;</a> <a href="#documentation">&uarr;</a></span></h2>
 
 <p>email <a href="mailto:e.stryker@gmail.com">Ethan Stryker</a></p>
+</main>
 
-  </div>
-  
 
-  
-  
-  <h2>Files</h2>
-  <ul>
-    
-      <li class="file"><a href="README.html">README</a></li>
-    
-  </ul>
-  
 
-  <h2 id="classes">Classes/Modules</h2>
-  <ul>
-    
-    <li class="class"><a href="OptSimple.html">OptSimple</a></li>
-    
-    <li class="class"><a href="OptSimple/Argument.html">OptSimple::Argument</a></li>
-    
-    <li class="class"><a href="OptSimple/Error.html">OptSimple::Error</a></li>
-    
-    <li class="class"><a href="OptSimple/Flag.html">OptSimple::Flag</a></li>
-    
-    <li class="class"><a href="OptSimple/InvalidOption.html">OptSimple::InvalidOption</a></li>
-    
-    <li class="class"><a href="OptSimple/MissingArgument.html">OptSimple::MissingArgument</a></li>
-    
-    <li class="class"><a href="OptSimple/Option.html">OptSimple::Option</a></li>
-    
-    <li class="class"><a href="OptSimple/Parameter.html">OptSimple::Parameter</a></li>
-    
-    <li class="class"><a href="OptSimple/ParameterUsageError.html">OptSimple::ParameterUsageError</a></li>
-    
-    <li class="class"><a href="OptSimple/Result.html">OptSimple::Result</a></li>
-    
-    <li class="module"><a href="Test.html">Test</a></li>
-    
-    <li class="module"><a href="Test/Unit.html">Test::Unit</a></li>
-    
-    <li class="class"><a href="Test/Unit/TestCase.html">Test::Unit::TestCase</a></li>
-    
-    <li class="class"><a href="Object.html">Object</a></li>
-    
-    <li class="class"><a href="Option.html">Option</a></li>
-    
-  </ul>
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="http://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="http://rdoc.rubyforge.org">RDoc</a> 4.1.0.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
 
-  <h2 id="methods">Methods</h2>
-  <ul>
-    
-      <li><a href="Test/Unit/TestCase.html#method-c-must">::must &mdash; Test::Unit::TestCase</a></li>
-    
-      <li><a href="OptSimple/Error.html#method-c-new">::new &mdash; OptSimple::Error</a></li>
-    
-      <li><a href="Option.html#method-c-new">::new &mdash; Option</a></li>
-    
-      <li><a href="OptSimple/Flag.html#method-c-new">::new &mdash; OptSimple::Flag</a></li>
-    
-      <li><a href="OptSimple/Option.html#method-c-new">::new &mdash; OptSimple::Option</a></li>
-    
-      <li><a href="OptSimple/Result.html#method-c-new">::new &mdash; OptSimple::Result</a></li>
-    
-      <li><a href="OptSimple.html#method-c-new">::new &mdash; OptSimple</a></li>
-    
-      <li><a href="OptSimple/Parameter.html#method-c-new">::new &mdash; OptSimple::Parameter</a></li>
-    
-      <li><a href="OptSimple/Result.html#method-i-5B-5D">#[] &mdash; OptSimple::Result</a></li>
-    
-      <li><a href="OptSimple/Result.html#method-i-5B-5D-3D">#[]= &mdash; OptSimple::Result</a></li>
-    
-      <li><a href="OptSimple/Flag.html#method-i-accumulate_opt">#accumulate_opt &mdash; OptSimple::Flag</a></li>
-    
-      <li><a href="OptSimple/Option.html#method-i-accumulate_opt">#accumulate_opt &mdash; OptSimple::Option</a></li>
-    
-      <li><a href="Option.html#method-i-accumulate_opt">#accumulate_opt &mdash; Option</a></li>
-    
-      <li><a href="OptSimple/Result.html#method-i-add_alias">#add_alias &mdash; OptSimple::Result</a></li>
-    
-      <li><a href="OptSimple.html#method-i-add_parameter">#add_parameter &mdash; OptSimple</a></li>
-    
-      <li><a href="OptSimple/Result.html#method-i-add_vals_from_hash">#add_vals_from_hash &mdash; OptSimple::Result</a></li>
-    
-      <li><a href="OptSimple/Result.html#method-i-aliases">#aliases &mdash; OptSimple::Result</a></li>
-    
-      <li><a href="OptSimple.html#method-i-argument">#argument &mdash; OptSimple</a></li>
-    
-      <li><a href="OptSimple.html#method-i-banner">#banner &mdash; OptSimple</a></li>
-    
-      <li><a href="OptSimple.html#method-i-default_arg_parser">#default_arg_parser &mdash; OptSimple</a></li>
-    
-      <li><a href="OptSimple/Parameter.html#method-i-error">#error &mdash; OptSimple::Parameter</a></li>
-    
-      <li><a href="OptSimple.html#method-i-error">#error &mdash; OptSimple</a></li>
-    
-      <li><a href="OptSimple.html#method-i-flag">#flag &mdash; OptSimple</a></li>
-    
-      <li><a href="Object.html#method-i-flag">#flag &mdash; Object</a></li>
-    
-      <li><a href="OptSimple.html#method-i-help">#help &mdash; OptSimple</a></li>
-    
-      <li><a href="OptSimple/Parameter.html#method-i-help_str">#help_str &mdash; OptSimple::Parameter</a></li>
-    
-      <li><a href="OptSimple/Result.html#method-i-include-3F">#include? &mdash; OptSimple::Result</a></li>
-    
-      <li><a href="OptSimple/Argument.html#method-i-mandatory-3F">#mandatory? &mdash; OptSimple::Argument</a></li>
-    
-      <li><a href="OptSimple/Parameter.html#method-i-mandatory-3F">#mandatory? &mdash; OptSimple::Parameter</a></li>
-    
-      <li><a href="OptSimple/Result.html#method-i-merge">#merge &mdash; OptSimple::Result</a></li>
-    
-      <li><a href="OptSimple/Result.html#method-i-merge-21">#merge! &mdash; OptSimple::Result</a></li>
-    
-      <li><a href="OptSimple/Result.html#method-i-method_missing">#method_missing &mdash; OptSimple::Result</a></li>
-    
-      <li><a href="OptSimple/Parameter.html#method-i-names">#names &mdash; OptSimple::Parameter</a></li>
-    
-      <li><a href="OptSimple.html#method-i-option">#option &mdash; OptSimple</a></li>
-    
-      <li><a href="Object.html#method-i-option">#option &mdash; Object</a></li>
-    
-      <li><a href="OptSimple.html#method-i-parse_opts">#parse_opts &mdash; OptSimple</a></li>
-    
-      <li><a href="OptSimple.html#method-i-parse_opts-21">#parse_opts! &mdash; OptSimple</a></li>
-    
-      <li><a href="OptSimple.html#method-i-register_opts">#register_opts &mdash; OptSimple</a></li>
-    
-      <li><a href="OptSimple/Parameter.html#method-i-set_opt">#set_opt &mdash; OptSimple::Parameter</a></li>
-    
-      <li><a href="OptSimple.html#method-i-summary">#summary &mdash; OptSimple</a></li>
-    
-      <li><a href="OptSimple/Parameter.html#method-i-switches-3D">#switches= &mdash; OptSimple::Parameter</a></li>
-    
-      <li><a href="OptSimple/Result.html#method-i-to_s">#to_s &mdash; OptSimple::Result</a></li>
-    
-      <li><a href="OptSimple.html#method-i-to_s">#to_s &mdash; OptSimple</a></li>
-    
-  </ul>
-
-  <div id="validator-badges">
-    <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
-    <p><small>Generated with the <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish
-      Rdoc Generator</a> 2</small>.</p>
-  </div>
-</body>
-</html>

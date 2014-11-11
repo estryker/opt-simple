@@ -26,6 +26,15 @@ class TestHelpStatement < Test::Unit::TestCase
 	end
       end
     end
+
+    os = OptSimple.new({},%w[--range 5])
+    assert_raise(OptSimple::ParameterUsageError) do
+      os.parse_opts! do
+	argument '--range' do |min,max| 
+	  nil
+	end
+      end
+    end
   end
   
   must "raise error when unknown option is given" do 
@@ -134,6 +143,57 @@ class TestHelpStatement < Test::Unit::TestCase
     end
 
     assert_equal o.some_stuff, %w[foo bar]
+  end
+
+  must "successfully pull out two options following a switch when desired" do 
+    o = OptSimple.new(nil,%w[--range 4 9]).parse_opts! do 
+      argument "--range","min,max" do | arg1, arg2 |
+	set_opt [arg1.to_i,arg2.to_i]
+      end
+    end
+    
+    assert_equal o.range.first, 4
+    assert_equal o.range.last, 9
+  end
+
+
+  must "allow for a variable number of options following a switch when a splat is used" do 
+
+    arg_lists = [%w[--things foo --whatever],
+      %w[--things foo bar --whatever],
+      %w[--whatever --things foo bar baz]]
+    
+    arg_lists.each do |args | 
+      # Gotta account for  '--whatever and --things switch in there'
+      expected_len = args.length - 2
+      os = OptSimple.new(nil,args).parse_opts! do  
+	argument "--things" do | *arg |
+	  arg.each do |a|
+	    accumulate_opt a
+	  end
+	end
+
+	flag '--whatever'
+	
+      end
+      assert_equal  expected_len, os.things.length
+    end
+    
+  end
+
+  # Hmm ... just want to be flexible here. perhaps not necessary
+  # Note you still gotta initialize things to an empty list to make it not nil
+  must "allow for no options following an option defined with a splat" do
+    os = OptSimple.new({:things => [] },%w[--whatever --things]).parse_opts! do  
+      option "--things" do | *arg |
+	arg.each do |a|
+	  accumulate_opt a
+	end
+      end
+      flag '--whatever'
+    end
+    # Note that without the defaults, things is nil, but os still includes it
+    assert os.things.empty?
   end
 end
 

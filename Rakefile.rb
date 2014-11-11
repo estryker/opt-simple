@@ -1,5 +1,6 @@
 require 'rake/testtask'
-require 'rake/rdoctask'
+#require 'rake/rdoctask'
+require 'rdoc/task'
 
 Rake::TestTask.new do |t|
     t.libs << "test"

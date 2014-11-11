@@ -18,7 +18,8 @@ can be used to set an option that will be returned in the Result. The 'accumulat
 method can be used in the option and argument blocks to create a list of values, and in 
 the flag block to increment a counter (with verbosity being the classic example). 
 
-The number of arguments are determined by the 'arity' of the block. 
+The number of arguments are determined by the 'arity' of the block, or a variable
+number if the splat operator is used. 
 
 The order in which the parameters are defined dictate their order on the command line.
 
@@ -62,12 +63,18 @@ It is recommended to install OptSimple using RubyGems:
  
    option %w[-p --pattern --glob-pattern], "glob pattern","PATTERN"
  
+   # this block has arity 2, so it expects two args to follow
    option "--range", "range: min,max (both >0)" do | arg1,arg2 |
      min,max = [arg1.to_i,arg2.to_i]
      set_opt [min,max]
       
      error "max must be greater than min" unless max > min
      error "both must be >=0" if min < 0
+   end  
+
+   # this block says that there are a variable number of arguments allowed
+   option %w[-t --things],"Some things - variable number allowed","THINGS" do | *args |
+     args.each {|a| accumulate_opt a }
    end
  end
  
@@ -94,7 +101,9 @@ It is recommended to install OptSimple using RubyGems:
 
  # Here, range was set to an Array. 
  puts "Range: #{opts.range.first} #{opts.range.last}"
- 
+
+ puts "Things: #{opts.things.inspect}"
+
 Which prints out an automatic usage statement:
  Usage: opt_ex.rb [options]
  
@@ -111,7 +120,9 @@ Which prints out an automatic usage statement:
      -p, --pattern, --glob-pattern PATTERN       glob pattern (default is '*')
  
          --range ARG                             range: min,max (both >0) (default is '[5, 10]')
- 
+
+         -t, --things THINGS                         Some things - variable number allowed 
+
      -h, --help                                  (for this help message)
 
 === A very simple example with no error checking. Use at your own risk!
