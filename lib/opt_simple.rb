@@ -27,14 +27,15 @@ class OptSimple
 
   # default keys should should be strings, 
   # args can be any list of strings, but defaults to ARGV
-  def initialize(defaults = {},args = ARGV)
+  def initialize(defaults: {},args:  ARGV)
     @mandatory_opts = []
     @optional_opts = []
     @parameters = []
     @param_names = {}
     @results = OptSimple::Result.new
     @longest_switch_len = 0 
-    @defaults = defaults
+    # set defaults to empty hash just in case user sets them to nil
+    @defaults = defaults || {}
     @args = args.to_a # especially for jruby
     @banner = "Usage: #{File.basename($0)} [options]"
     @summary = ""
@@ -58,10 +59,11 @@ class OptSimple
 
   # Simply register options without actually parsing them. 
   # This allows registering parms in multiple places in your code.
-  def register_opts(&block)
+  def register_opts(defaults: {}, &block)
     # call the block to register all the parameters and
     # their corresponding code blocks
     # We use instance_exec so that the API is cleaner. 
+    @defaults.merge!(defaults)
     instance_exec(@results,&block)
     self
   end

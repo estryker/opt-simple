@@ -246,7 +246,7 @@ Which prints out an automatic usage statement:
    option %w[-p --pattern --glob-pattern], "glob pattern","PATTERN"
  end
  
- os.register_opts do 
+ os.register_opts({num: 7}) do 
    option %w[-n -num --num-values],"Number of val","VAL" do |arg|
      set_opt arg.to_i
    end
@@ -309,4 +309,5 @@ Which prints out an automatic usage statement:
   
 email [Ethan Stryker](mailto:e.stryker@gmail.com])
  
- 
+## License
+MIT - see [LICENSE](LICENSE.txt) 

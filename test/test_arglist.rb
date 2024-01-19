@@ -5,7 +5,7 @@ require 'test_unit_extensions'
 class ArglistTest < Test::Unit::TestCase
   def setup
     @args = %w[infile1 -v infile2 -o out.txt infile3 -- -infile4 infile5]
-    @os = OptSimple.new({},@args)
+    @os = OptSimple.new(defaults: {},args: @args)
     @block = Proc.new {
       flag '-v'
       argument '-o'

@@ -8,14 +8,14 @@ class TestHelpStatement < Test::Unit::TestCase
     defaults = {
       :a => 1000
     }
-    os = OptSimple.new(defaults)
+    os = OptSimple.new(defaults: defaults)
     os.add_parameter(OptSimple::Option.new '-a' )
     
     assert os.to_s =~/default.*#{defaults['a']}/
   end
 
   must "order help according to specification order" do 
-    os = OptSimple.new({},['-h'])
+    os = OptSimple.new(defaults: {},args: ['-h'])
     os.add_parameter(OptSimple::Option.new '-a')
     os.add_parameter(OptSimple::Flag.new '-b')
     os.add_parameter(OptSimple::Option.new '-c')
@@ -28,7 +28,7 @@ class TestHelpStatement < Test::Unit::TestCase
 
   must "allow user defined help statements" do
     my_help = "Totally irrelevant"
-    os = OptSimple.new({},['-h'])
+    os = OptSimple.new(defaults: {},args: ['-h'])
     os.add_parameter(OptSimple::Option.new '-a')
     os.add_parameter(OptSimple::Flag.new '-b')
     os.help my_help
@@ -37,14 +37,14 @@ class TestHelpStatement < Test::Unit::TestCase
   end
 
   must "provide user specified summary statement in help" do
-    os = OptSimple.new({},['-h'])
+    os = OptSimple.new(defaults: {},args: ['-h'])
     os.add_parameter(OptSimple::Option.new '-a')
     os.summary "My summary"
     assert os.to_s.match(Regexp.new("My summary",Regexp::MULTILINE))
   end
 
   must "add metavars to help statement" do 
-    os = OptSimple.new({},['-h'])
+    os = OptSimple.new(defaults: {},args: ['-h'])
     os.add_parameter(OptSimple::Option.new '-a',"some help","THING")
     assert os.to_s.match(Regexp.new("\-a.*THING.*some help",Regexp::MULTILINE))
   end

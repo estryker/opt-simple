@@ -1,6 +1,6 @@
 module Test::Unit
   # Used to fix a minor minitest/unit incompatibility in flexmock 
-  AssertionFailedError = Class.new(StandardError)
+  # AssertionFailedError = Class.new(StandardError)
   
   class TestCase
    

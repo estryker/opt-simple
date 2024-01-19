@@ -9,7 +9,7 @@ class TestHelpStatement < Test::Unit::TestCase
   end
 
   must "throw parameter missing exception when the argument method is used but the parm isn't specified" do
-    os = OptSimple.new({})
+    os = OptSimple.new(defaults: {})
     assert_raise(OptSimple::MissingArgument) do
       os.parse_opts! do
 	argument '-a'
@@ -18,7 +18,7 @@ class TestHelpStatement < Test::Unit::TestCase
   end
 
   must "throw missing parameter usage error when a parameter isn't followed by enough arguments" do
-    os = OptSimple.new({},['-a'])
+    os = OptSimple.new(defaults: {},args: ['-a'])
     assert_raise(OptSimple::ParameterUsageError) do
       os.parse_opts! do
 	argument '-a' do |arg| 
@@ -27,7 +27,7 @@ class TestHelpStatement < Test::Unit::TestCase
       end
     end
 
-    os = OptSimple.new({},%w[--range 5])
+    os = OptSimple.new(defaults: {},args: %w[--range 5])
     assert_raise(OptSimple::ParameterUsageError) do
       os.parse_opts! do
 	argument '--range' do |min,max| 
@@ -38,12 +38,12 @@ class TestHelpStatement < Test::Unit::TestCase
   end
   
   must "raise error when unknown option is given" do 
-    os = OptSimple.new({},['-not-specified'])
+    os = OptSimple.new(defaults: {},args: ['-not-specified'])
     assert_raise(OptSimple::InvalidOption) { os.parse_opts! { option %w[-a --awesome]  }  }
   end
 
   must "handle arguments with equals and commas" do
-    os = OptSimple.new({},['-a=2','--foo=4,5'])
+    os = OptSimple.new(defaults: {},args: ['-a=2','--foo=4,5'])
     x = nil
     y = nil
     opts= os.parse_opts! do
@@ -62,7 +62,7 @@ class TestHelpStatement < Test::Unit::TestCase
   end
 
   must "accumulate lists of args when asked" do 
-    os = OptSimple.new({},%w[-i foo.bar --infile bar.in])
+    os = OptSimple.new(defaults: {},args: %w[-i foo.bar --infile bar.in])
     o = os.parse_opts! do 
       option %w[-i --infile], "Infile, multiple allowed", "FILE" do | arg |
 	accumulate_opt arg
@@ -74,7 +74,7 @@ class TestHelpStatement < Test::Unit::TestCase
   end
 
   must "accumulate numbers of flags set when asked" do 
-    os = OptSimple.new({},%w[-v -v --verbose -v])
+    os = OptSimple.new(defaults: {},args: %w[-v -v --verbose -v])
     o = os.parse_opts! do 
       flag %w[-v  --verbose],"Verbosity. the more you set, the more we give" do 
 	accumulate_opt
@@ -85,7 +85,7 @@ class TestHelpStatement < Test::Unit::TestCase
   end
 
   must "set last arg when duplicated when accumulate opt isn't used" do 
-    os = OptSimple.new({},%w[-i foo.bar --infile bar.in -i baz])
+    os = OptSimple.new(defaults: {},args: %w[-i foo.bar --infile bar.in -i baz])
     o = os.parse_opts! do 
       option %w[-i --infile], "Infile, multiple allowed", "FILE" do | arg |
 	set_opt arg
@@ -97,7 +97,7 @@ class TestHelpStatement < Test::Unit::TestCase
   end
 
   must "allow parameters to be registered in multiple spots" do 
-    os = OptSimple.new({},%w[-i foo.bar --outfile bar.out])
+    os = OptSimple.new(defaults: {},args: %w[-i foo.bar --outfile bar.out])
     os.register_opts do 
       option %w[-i --infile], "Infile", "FILE" do | arg |
 	set_opt arg
@@ -115,6 +115,27 @@ class TestHelpStatement < Test::Unit::TestCase
     assert_equal o['o'],'bar.out'
   end
 
+  must "allow defaults when registering opts in multiple spots" do 
+    os = OptSimple.new(defaults: {outfile: 'old-default'},args: %w[-i foo.bar])
+
+    os.register_opts do 
+      option %w[-i --infile], "Infile", "FILE" do | arg |
+	set_opt arg
+      end
+    end
+
+    os.register_opts(defaults: {outfile: 'new-default'}) do 
+      option %w[-o --outfile], "outfile", "FILE" do | arg |
+	set_opt arg
+      end
+    end
+    o = os.parse_opts!
+    
+    assert_equal o['i'],'foo.bar'
+    assert_equal o['o'],'new-default'
+
+  end
+
   must "set flags to false by default" do
     os = OptSimple.new
     o = os.parse_opts! do 
@@ -125,7 +146,7 @@ class TestHelpStatement < Test::Unit::TestCase
   end
 
   must "add undersore versions to all switch names that have a dash" do 
-    os = OptSimple.new({},%w[--some-stuff foo])
+    os = OptSimple.new(defaults: {},args: %w[--some-stuff foo])
     o = os.parse_opts! do 
       option %w[-s --some-stuff]
     end
@@ -135,7 +156,7 @@ class TestHelpStatement < Test::Unit::TestCase
   end
 
   must "overwrite defaults when accumulate opt is used and option is seen on the CL" do
-    os = OptSimple.new({:some_stuff => ['bar']},%w[--some-stuff foo --some-stuff bar])
+    os = OptSimple.new(defaults: {:some_stuff => ['bar']},args: %w[--some-stuff foo --some-stuff bar])
     o = os.parse_opts! do 
       option %w[-s --some-stuff] do | arg |
 	accumulate_opt arg
@@ -146,7 +167,7 @@ class TestHelpStatement < Test::Unit::TestCase
   end
 
   must "successfully pull out two options following a switch when desired" do 
-    o = OptSimple.new(nil,%w[--range 4 9]).parse_opts! do 
+    o = OptSimple.new(defaults: nil,args: %w[--range 4 9]).parse_opts! do 
       argument "--range","min,max" do | arg1, arg2 |
 	set_opt [arg1.to_i,arg2.to_i]
       end
@@ -166,7 +187,7 @@ class TestHelpStatement < Test::Unit::TestCase
     arg_lists.each do |args | 
       # Gotta account for  '--whatever and --things switch in there'
       expected_len = args.length - 2
-      os = OptSimple.new(nil,args).parse_opts! do  
+      os = OptSimple.new(defaults: nil,args: args).parse_opts! do  
 	argument "--things" do | *arg |
 	  arg.each do |a|
 	    accumulate_opt a
@@ -184,7 +205,7 @@ class TestHelpStatement < Test::Unit::TestCase
   # Hmm ... just want to be flexible here. perhaps not necessary
   # Note you still gotta initialize things to an empty list to make it not nil
   must "allow for no options following an option defined with a splat" do
-    os = OptSimple.new({:things => [] },%w[--whatever --things]).parse_opts! do  
+    os = OptSimple.new(defaults: {:things => [] },args: %w[--whatever --things]).parse_opts! do  
       option "--things" do | *arg |
 	arg.each do |a|
 	  accumulate_opt a

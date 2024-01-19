@@ -25,5 +25,5 @@ task :release => [:rdoc] do
   
   # god I love ruby:
   newest_gem = Dir["opt-simple-*.gem"].sort {|a,b| File.mtime(b) <=> File.mtime(a)}.first
-  sh "gem1.9.1 push #{newest_gem}"
+  sh "gem push #{newest_gem}"
 end

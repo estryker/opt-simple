@@ -1,9 +1,9 @@
 Gem::Specification.new do |spec|
   spec.name = "opt-simple"
-  spec.version = "0.9.12"
+  spec.version = "1.0.0"
   spec.summary = "A simple and elegant command line option parser."
   spec.files = Dir['lib/*.rb'] + Dir['test/*.rb'] + 
-	  Dir['extensions/*.rb'] + ['README','GPLv2-LICENSE']
+	  Dir['extensions/*.rb'] + ['README.md','LICENSE.txt']
   spec.has_rdoc = true
   spec.author = "Ethan Stryker"
   spec.email = "e.stryker@gmail.com"
