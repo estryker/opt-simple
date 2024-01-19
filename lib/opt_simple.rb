@@ -148,9 +148,8 @@ class OptSimple
 	  end
 	  
 	  chunks.each do | pieces |
-	    if parm.block.arity > 0 and 
-		(pieces.length < parm.block.arity or
-		 pieces.any? {|p| p.start_with?('-')})
+	    # Note that we remove the leading '-' restriction to allow for negative numbers in arguments
+	    if parm.block.arity > 0 and	(pieces.length < parm.block.arity) # or # pieces.any? {|p| p.start_with?('-')})
 	      raise OptSimple::ParameterUsageError.new "Not enough args following #{intersection}",self 
 	    end
 	    

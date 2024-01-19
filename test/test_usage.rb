@@ -176,7 +176,17 @@ class TestHelpStatement < Test::Unit::TestCase
     assert_equal o.range.first, 4
     assert_equal o.range.last, 9
   end
-
+  
+  must "successfully pull out two options with negative numbers following a switch when desired" do 
+    o = OptSimple.new(defaults: nil,args: %w[--range -4 9]).parse_opts! do 
+      argument "--range","min,max" do | arg1, arg2 |
+	set_opt [arg1.to_i,arg2.to_i]
+      end
+    end
+    
+    assert_equal o.range.first, -4
+    assert_equal o.range.last, 9
+  end
 
   must "allow for a variable number of options following a switch when a splat is used" do 
 
@@ -217,4 +227,3 @@ class TestHelpStatement < Test::Unit::TestCase
     assert os.things.empty?
   end
 end
-
